@@ -41,13 +41,13 @@ start_link(ChannelMod, Channel, Options) ->
     end.
 
 -spec send_command(Controller :: pid(), Command :: command()) ->
-    {ok, Response :: map()} | {error, Reason :: term()}.
+    {ok, Response :: response()} | {error, Reason :: term()}.
 
 send_command(Controller, Command) ->
     send_command(Controller, Command, []).
 
 -spec send_command(Controller :: pid(), Command :: command(), options()) ->
-    {ok, Response :: map()} | {error, Reason :: term()}.
+    {ok, Response :: response()} | {error, Reason :: term()}.
 
 send_command(Controller, #quit{}, Options) ->
     case gen_server:call(Controller, {send_command, #quit{}, Options}) of

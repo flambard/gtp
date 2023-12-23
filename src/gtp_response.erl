@@ -26,10 +26,10 @@ encode_optional_id(ID) -> gtp_types:encode_int(ID).
 %%%
 
 decode(_CommandMod, <<"? ", Error/binary>>) ->
-    {undefined, {error, Error}};
+    {undefined, #failure{error_message = Error}};
 decode(_CommandMod, <<"?", IdAndError/binary>>) ->
     [ID, Error] = binary:split(IdAndError, <<" ">>),
-    {gtp_types:decode_int(ID), {error, Error}};
+    {gtp_types:decode_int(ID), #failure{error_message = Error}};
 decode(CommandMod, <<"= ", ResponseValues/binary>>) ->
     EncodedValues = binary:split(ResponseValues, <<" ">>, [global, trim_all]),
     {undefined, CommandMod:decode_response_values(EncodedValues)};
