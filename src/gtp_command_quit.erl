@@ -1,7 +1,6 @@
 -module(gtp_command_quit).
 -behaviour(gtp_command).
 -include("gtp.hrl").
--include("gtp_commands.hrl").
 
 -export([
     encode_command/1,

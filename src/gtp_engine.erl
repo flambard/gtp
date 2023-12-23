@@ -1,6 +1,6 @@
 -module(gtp_engine).
 -behaviour(gen_server).
--include("gtp_commands.hrl").
+-include("gtp.hrl").
 
 -type engine() :: term().
 

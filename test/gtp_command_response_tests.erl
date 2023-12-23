@@ -1,5 +1,6 @@
 -module(gtp_command_response_tests).
 -include_lib("eunit/include/eunit.hrl").
+-include_lib("gtp.hrl").
 
 roundtrip_test() ->
     {ok, ChannelA} = gtp_erlang_channel:start_link(),

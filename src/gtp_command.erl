@@ -1,6 +1,5 @@
 -module(gtp_command).
 -include("gtp.hrl").
--include("gtp_commands.hrl").
 
 -callback encode_command(Command :: command()) -> EncodedCommand :: iodata().
 

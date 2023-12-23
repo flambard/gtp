@@ -1,7 +1,6 @@
 -module(gtp_controller).
 -behaviour(gen_server).
 -include("gtp.hrl").
--include("gtp_commands.hrl").
 
 -type option() :: {id, pos_integer()}.
 

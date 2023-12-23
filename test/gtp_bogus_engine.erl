@@ -1,5 +1,6 @@
 -module(gtp_bogus_engine).
 -behaviour(gtp_engine).
+-include_lib("gtp.hrl").
 
 -export([
     handle_protocol_version/1,
