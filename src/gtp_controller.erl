@@ -53,9 +53,9 @@ send_command(Controller, #quit{}, Options) ->
     case gen_server:call(Controller, {send_command, #quit{}, Options}) of
         {error, Reason} ->
             {error, Reason};
-        {ok, #success_response{}} ->
+        {ok, #success_response{} = SuccessResponse} ->
             gen_server:stop(Controller),
-            {ok, #success_response{}}
+            {ok, SuccessResponse}
     end;
 send_command(Controller, Command, Options) ->
     gen_server:call(Controller, {send_command, Command, Options}).
