@@ -13,7 +13,7 @@ roundtrip_test() ->
 
     {ok, Controller} = gtp_controller:start_link(gtp_erlang_channel, ChannelA, []),
 
-    {ok, #success_response{values = #{version_number := 2}}} =
+    {ok, #success{values = #{version_number := 2}}} =
         gtp_controller:send_command(Controller, #protocol_version{}, [{id, 1}]).
 
 shutdown_test() ->
@@ -27,7 +27,7 @@ shutdown_test() ->
 
     {ok, Controller} = gtp_controller:start_link(gtp_erlang_channel, ChannelA, []),
 
-    {ok, #success_response{values = #{}}} = gtp_controller:send_command(Controller, #quit{}),
+    {ok, #success{values = #{}}} = gtp_controller:send_command(Controller, #quit{}),
 
     false = is_process_alive(ChannelA),
     false = is_process_alive(ChannelB),

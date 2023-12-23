@@ -24,4 +24,4 @@ encode_response_values(#{}) ->
     [].
 
 decode_response_values([]) ->
-    #success_response{}.
+    #success{}.
