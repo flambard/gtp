@@ -9,8 +9,8 @@
 %% API
 -export([
     start_link/3,
-    command_protocol_version/2,
-    command_quit/2
+    send_command/2,
+    send_command/3
 ]).
 
 %% gen_server callbacks
@@ -40,22 +40,25 @@ start_link(ChannelMod, Channel, Options) ->
             Other
     end.
 
--spec command_protocol_version(Controller :: pid(), options()) ->
-    {ok, ProtocolVersion :: pos_integer()} | {error, Reason :: term()}.
+-spec send_command(Controller :: pid(), Command :: command()) ->
+    {ok, Response :: map()} | {error, Reason :: term()}.
 
-command_protocol_version(Controller, Options) ->
-    gen_server:call(Controller, {send_command, #protocol_version{}, Options}).
+send_command(Controller, Command) ->
+    send_command(Controller, Command, []).
 
--spec command_quit(Controller :: pid(), options()) -> ok | {error, Reason :: term()}.
+-spec send_command(Controller :: pid(), Command :: command(), options()) ->
+    {ok, Response :: map()} | {error, Reason :: term()}.
 
-command_quit(Controller, Options) ->
+send_command(Controller, #quit{}, Options) ->
     case gen_server:call(Controller, {send_command, #quit{}, Options}) of
         {error, Reason} ->
             {error, Reason};
         {ok, #success_response{}} ->
             gen_server:stop(Controller),
             {ok, #success_response{}}
-    end.
+    end;
+send_command(Controller, Command, Options) ->
+    gen_server:call(Controller, {send_command, Command, Options}).
 
 %%%
 %%% gen_server callbacks
