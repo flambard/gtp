@@ -1,13 +1,15 @@
 -module(gtp_bogus_engine).
 -behaviour(gtp_engine).
+-include_lib("gtp.hrl").
 
 -export([
-    handle_protocol_version/1,
-    handle_quit/1
+    handle_command/2
 ]).
 
-handle_protocol_version(_Engine) ->
-    {ok, #{version_number => 2}}.
+handle_command(_Engine, Command) ->
+    handle_command(Command).
 
-handle_quit(_Engine) ->
+handle_command(#protocol_version{}) ->
+    {ok, #{version_number => 2}};
+handle_command(#quit{}) ->
     {ok, #{}}.

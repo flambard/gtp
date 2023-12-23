@@ -1,12 +1,11 @@
 -module(gtp_engine).
 -behaviour(gen_server).
--include("gtp_commands.hrl").
+-include("gtp.hrl").
 
 -type engine() :: term().
 
--callback handle_protocol_version(engine()) -> {ok, #{version_number => pos_integer()}}.
-
--callback handle_quit(engine()) -> {ok, #{}}.
+-callback handle_command(engine(), command()) ->
+    {ok, #{atom() := term()}} | {error, Error :: iodata()}.
 
 %% API
 -export([
@@ -76,7 +75,7 @@ handle_info({gtp, CommandMessage}, State) ->
     Command = CommandMod:decode_command_arguments(CommandArgs),
 
     ResponseMessage =
-        case call_engine(EngineMod, Engine, Command) of
+        case EngineMod:handle_command(Engine, Command) of
             {error, Error} ->
                 gtp_response:encode_error(ID, Error);
             {ok, ResponseValues} ->
@@ -96,9 +95,3 @@ terminate(_Reason, State) ->
         channel_module := ChannelMod
     } = State,
     ChannelMod:stop(Channel).
-
-call_engine(EngineMod, Engine, Command) ->
-    case Command of
-        #protocol_version{} -> EngineMod:handle_protocol_version(Engine);
-        #quit{} -> EngineMod:handle_quit(Engine)
-    end.
