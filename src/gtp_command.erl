@@ -39,10 +39,12 @@ split_binary_with_rest(Bin, Pattern) ->
 command_module(CommandName) when is_binary(CommandName) ->
     case CommandName of
         <<"protocol_version">> -> gtp_command_protocol_version;
+        <<"known_command">> -> gtp_command_known_command;
         <<"quit">> -> gtp_command_quit
     end;
 command_module(Command) ->
     case Command of
         #protocol_version{} -> gtp_command_protocol_version;
+        #known_command{} -> gtp_command_known_command;
         #quit{} -> gtp_command_quit
     end.

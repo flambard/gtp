@@ -10,6 +10,8 @@
 
 -record(quit, {}).
 
+-record(known_command, {command_name :: binary()}).
+
 -type command() :: #protocol_version{} | #quit{}.
 
 %%%

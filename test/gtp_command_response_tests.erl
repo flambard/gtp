@@ -33,3 +33,17 @@ shutdown_test() ->
     false = is_process_alive(ChannelB),
     false = is_process_alive(Engine),
     false = is_process_alive(Controller).
+
+command_with_single_argument_test() ->
+    {ok, ChannelA} = gtp_erlang_channel:start_link(),
+    {ok, ChannelB} = gtp_erlang_channel:start_link(),
+    ok = gtp_erlang_channel:connect(ChannelA, ChannelB),
+
+    {ok, _Engine} = gtp_engine:start_link(
+        gtp_bogus_engine, make_ref(), gtp_erlang_channel, ChannelB, []
+    ),
+
+    {ok, Controller} = gtp_controller:start_link(gtp_erlang_channel, ChannelA, []),
+
+    {ok, #success{values = #{known := true}}} =
+        gtp_controller:send_command(Controller, #known_command{command_name = <<"known_command">>}).
