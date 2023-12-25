@@ -2,7 +2,15 @@
 
 -include("gtp.hrl").
 
--export([encode/1, encode_int/1, decode_int/1, encode_float/1, decode_float/1]).
+-export([
+    encode/1,
+    encode_int/1,
+    decode_int/1,
+    encode_float/1,
+    decode_float/1,
+    encode_boolean/1,
+    decode_boolean/1
+]).
 
 encode(Int) when is_integer(Int) ->
     integer_to_binary(Int);
@@ -43,3 +51,9 @@ encode_float(Float) ->
 
 decode_float(Binary) ->
     binary_to_float(Binary).
+
+encode_boolean(true) -> <<"true">>;
+encode_boolean(false) -> <<"false">>.
+
+decode_boolean(<<"true">>) -> true;
+decode_boolean(<<"false">>) -> false.
