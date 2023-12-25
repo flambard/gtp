@@ -3,5 +3,5 @@
 
 -callback decode_command_arguments(EncodedArgs :: binary()) -> command().
 
--callback encode_response_values(ResponseValues :: #{atom() => term()}) ->
+-callback encode_response_values(ResponseValues :: response_values()) ->
     EncodedResponseValues :: [iodata()].

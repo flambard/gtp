@@ -3,4 +3,5 @@
 
 -callback encode_command(Command :: command()) -> EncodedCommand :: iodata().
 
--callback decode_response_values(EncodedResponseValues :: [binary()]) -> Response :: response().
+-callback decode_response_values(EncodedResponseValues :: [binary()]) ->
+    ResponseValues :: response_values().

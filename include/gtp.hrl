@@ -16,7 +16,9 @@
 %%% Responses
 %%%
 
--record(success, {values = #{} :: #{atom() => term()}}).
+-type response_values() :: #{atom() => term()}.
+
+-record(success, {values = #{} :: response_values()}).
 -record(failure, {error_message :: binary()}).
 
 -type response() :: #success{} | #failure{}.

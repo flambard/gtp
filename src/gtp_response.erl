@@ -32,9 +32,12 @@ decode(_CommandMod, <<"?", IdAndError/binary>>) ->
     {gtp_types:decode_int(ID), #failure{error_message = Error}};
 decode(CommandMod, <<"= ", ResponseValues/binary>>) ->
     EncodedValues = binary:split(ResponseValues, <<" ">>, [global, trim_all]),
-    {undefined, CommandMod:decode_response_values(EncodedValues)};
+    Response = #success{values = CommandMod:decode_response_values(EncodedValues)},
+    {undefined, Response};
 decode(CommandMod, <<"=">>) ->
-    {undefined, CommandMod:decode_response_values([])};
+    Response = #success{values = CommandMod:decode_response_values([])},
+    {undefined, Response};
 decode(CommandMod, <<"=", IdAndResponseValues/binary>>) ->
     [ID | EncodedValues] = binary:split(IdAndResponseValues, <<" ">>, [global, trim_all]),
-    {gtp_types:decode_int(ID), CommandMod:decode_response_values(EncodedValues)}.
+    Response = #success{values = CommandMod:decode_response_values(EncodedValues)},
+    {gtp_types:decode_int(ID), Response}.
