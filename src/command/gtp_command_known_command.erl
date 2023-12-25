@@ -30,4 +30,5 @@ encode_response_values(#{known := Known}) ->
     [gtp_types:encode_boolean(Known)].
 
 decode_response_values([Known]) ->
-    #{known => gtp_types:decode_boolean(Known)}.
+    {IsKnown, []} = gtp_types:decode_boolean(Known),
+    #{known => IsKnown}.

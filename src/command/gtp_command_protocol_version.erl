@@ -30,4 +30,5 @@ encode_response_values(#{version_number := Version}) ->
     [gtp_types:encode_int(Version)].
 
 decode_response_values([EncodedVersion]) ->
-    #{version_number => gtp_types:decode_int(EncodedVersion)}.
+    {Version, []} = gtp_types:decode_int(EncodedVersion),
+    #{version_number => Version}.
