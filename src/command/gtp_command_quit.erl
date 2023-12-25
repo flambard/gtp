@@ -4,7 +4,8 @@
 -include("gtp.hrl").
 
 -export([
-    encode_command/1,
+    name/0,
+    encode_command_arguments/1,
     decode_command_arguments/1,
     encode_response_values/1,
     decode_response_values/1
@@ -15,8 +16,11 @@
 % output: none
 % fails: never
 
-encode_command(#quit{}) ->
+name() ->
     <<"quit">>.
+
+encode_command_arguments(#quit{}) ->
+    [].
 
 decode_command_arguments(<<>>) ->
     #quit{}.

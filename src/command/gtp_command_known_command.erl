@@ -4,9 +4,10 @@
 -include("gtp.hrl").
 
 -export([
+    name/0,
     decode_command_arguments/1,
     decode_response_values/1,
-    encode_command/1,
+    encode_command_arguments/1,
     encode_response_values/1
 ]).
 
@@ -17,8 +18,10 @@
 %   boolean known
 % fails: never
 
-encode_command(#known_command{command_name = Name}) ->
-    [<<"known_command">>, " ", Name].
+name() -> <<"known_command">>.
+
+encode_command_arguments(#known_command{command_name = Name}) ->
+    [Name].
 
 decode_command_arguments(<<CommandName/binary>>) ->
     #known_command{command_name = CommandName}.
