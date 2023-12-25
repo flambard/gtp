@@ -47,3 +47,21 @@ command_with_single_argument_test() ->
 
     {ok, #success{values = #{known := true}}} =
         gtp_controller:send_command(Controller, #known_command{command_name = <<"known_command">>}).
+
+command_with_multiple_arguments_test() ->
+    {ok, ChannelA} = gtp_erlang_channel:start_link(),
+    {ok, ChannelB} = gtp_erlang_channel:start_link(),
+    ok = gtp_erlang_channel:connect(ChannelA, ChannelB),
+
+    {ok, _Engine} = gtp_engine:start_link(
+        gtp_bogus_engine, make_ref(), gtp_erlang_channel, ChannelB, []
+    ),
+
+    {ok, Controller} = gtp_controller:start_link(gtp_erlang_channel, ChannelA, []),
+
+    {ok, #failure{error_message = <<"unknown command">>}} =
+        gtp_controller:send_command(Controller, #time_left{
+            color = black,
+            time = 30,
+            stones = 0
+        }).

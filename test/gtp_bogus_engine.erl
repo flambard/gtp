@@ -14,7 +14,9 @@ handle_command(#protocol_version{}) ->
 handle_command(#known_command{command_name = Name}) ->
     {ok, #{known => is_known_command(Name)}};
 handle_command(#quit{}) ->
-    {ok, #{}}.
+    {ok, #{}};
+handle_command(_Unknown) ->
+    {error, "unknown command"}.
 
 %%%
 %%% Private function

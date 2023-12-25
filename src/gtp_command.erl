@@ -40,11 +40,13 @@ command_module(CommandName) when is_binary(CommandName) ->
     case CommandName of
         <<"protocol_version">> -> gtp_command_protocol_version;
         <<"known_command">> -> gtp_command_known_command;
-        <<"quit">> -> gtp_command_quit
+        <<"quit">> -> gtp_command_quit;
+        <<"time_left">> -> gtp_command_time_left
     end;
 command_module(Command) ->
     case Command of
         #protocol_version{} -> gtp_command_protocol_version;
         #known_command{} -> gtp_command_known_command;
-        #quit{} -> gtp_command_quit
+        #quit{} -> gtp_command_quit;
+        #time_left{} -> gtp_command_time_left
     end.

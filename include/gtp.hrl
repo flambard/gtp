@@ -1,5 +1,7 @@
 -type id() :: undefined | pos_integer().
 
+-type color() :: black | white.
+
 -record(move, {color, vertex}).
 
 %%%
@@ -12,7 +14,17 @@
 
 -record(known_command, {command_name :: binary()}).
 
--type command() :: #protocol_version{} | #quit{}.
+-record(time_left, {
+    color :: color(),
+    time :: non_neg_integer(),
+    stones = 0 :: non_neg_integer()
+}).
+
+-type command() ::
+    #protocol_version{}
+    | #quit{}
+    | #known_command{}
+    | #time_left{}.
 
 %%%
 %%% Responses
