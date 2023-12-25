@@ -1,15 +1,6 @@
 -module(gtp_command).
 -include("gtp.hrl").
 
--callback encode_command(Command :: command()) -> EncodedCommand :: iodata().
-
--callback decode_command_arguments(EncodedArgs :: binary()) -> command().
-
--callback encode_response_values(ResponseValues :: #{atom() => term()}) ->
-    EncodedResponseValues :: [iodata()].
-
--callback decode_response_values(EncodedResponseValues :: [binary()]) -> Response :: response().
-
 -export([
     encode_optional_id/1,
     decode_command_message/1,

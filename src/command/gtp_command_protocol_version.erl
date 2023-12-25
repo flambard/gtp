@@ -1,5 +1,6 @@
 -module(gtp_command_protocol_version).
--behaviour(gtp_command).
+-behaviour(gtp_controller_command).
+-behaviour(gtp_engine_command).
 -include("gtp.hrl").
 
 -export([
