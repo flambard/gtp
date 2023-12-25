@@ -14,11 +14,22 @@
 name() ->
     <<"time_left">>.
 
-encode_command_arguments(#time_left{}) ->
-    [].
+encode_command_arguments(#time_left{color = Color, time = Time, stones = Stones}) ->
+    [
+        gtp_types:encode_color(Color),
+        gtp_types:encode_int(Time),
+        gtp_types:encode_int(Stones)
+    ].
 
-decode_command_arguments(_Bin) ->
-    #{}.
+decode_command_arguments(Bin) ->
+    {Color, [R1]} = gtp_types:decode_color(Bin),
+    {Time, [R2]} = gtp_types:decode_int(R1),
+    {Stones, []} = gtp_types:decode_int(R2),
+    #time_left{
+        color = Color,
+        time = Time,
+        stones = Stones
+    }.
 
 encode_response_values(#{}) ->
     [].
