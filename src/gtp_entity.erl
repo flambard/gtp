@@ -1,5 +1,4 @@
--module(gtp_types).
-
+-module(gtp_entity).
 -include("gtp.hrl").
 
 -export([

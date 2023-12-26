@@ -19,7 +19,7 @@ encode_error(ID, Error) ->
     ["?", encode_optional_id(ID), <<" ">>, Error].
 
 encode_optional_id(undefined) -> <<"">>;
-encode_optional_id(ID) -> gtp_types:encode_int(ID).
+encode_optional_id(ID) -> gtp_entity:encode_int(ID).
 
 %%%
 %%% Decoding
@@ -29,7 +29,7 @@ decode(_CommandMod, <<"? ", Error/binary>>) ->
     {undefined, #failure{error_message = Error}};
 decode(_CommandMod, <<"?", IdAndError/binary>>) ->
     [BinID, Error] = binary:split(IdAndError, <<" ">>),
-    {ID, []} = gtp_types:decode_int(BinID),
+    {ID, []} = gtp_entity:decode_int(BinID),
     {ID, #failure{error_message = Error}};
 decode(CommandMod, <<"= ", ResponseValues/binary>>) ->
     EncodedValues = binary:split(ResponseValues, <<" ">>, [global, trim_all]),
@@ -40,6 +40,6 @@ decode(CommandMod, <<"=">>) ->
     {undefined, Response};
 decode(CommandMod, <<"=", IdAndResponseValues/binary>>) ->
     [BinID | EncodedValues] = binary:split(IdAndResponseValues, <<" ">>, [global, trim_all]),
-    {ID, []} = gtp_types:decode_int(BinID),
+    {ID, []} = gtp_entity:decode_int(BinID),
     Response = #success{values = CommandMod:decode_response_values(EncodedValues)},
     {ID, Response}.

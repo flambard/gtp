@@ -27,8 +27,8 @@ decode_command_arguments(<<CommandName/binary>>) ->
     #known_command{command_name = CommandName}.
 
 encode_response_values(#{known := Known}) ->
-    [gtp_types:encode_boolean(Known)].
+    [gtp_entity:encode_boolean(Known)].
 
 decode_response_values([Known]) ->
-    {IsKnown, []} = gtp_types:decode_boolean(Known),
+    {IsKnown, []} = gtp_entity:decode_boolean(Known),
     #{known => IsKnown}.
