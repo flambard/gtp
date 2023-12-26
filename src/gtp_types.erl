@@ -76,8 +76,10 @@ decode_color(Bin) ->
         [<<"white">> | Rest] -> {white, Rest}
     end.
 
-decode_vertex(_Binary) ->
-    not_implemented.
+decode_vertex(<<Letter:1/binary, Number/binary>>) ->
+    L = binary_to_atom(Letter),
+    {N, Rest} = decode_int(Number),
+    {{L, N}, Rest}.
 
 decode_move(Binary) ->
     {Color, [R1]} = decode_color(Binary),
