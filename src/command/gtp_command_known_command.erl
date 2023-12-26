@@ -21,10 +21,11 @@
 name() -> <<"known_command">>.
 
 encode_command_arguments(#known_command{command_name = Name}) ->
-    [Name].
+    [gtp_entity:encode_string(Name)].
 
-decode_command_arguments(<<CommandName/binary>>) ->
-    #known_command{command_name = CommandName}.
+decode_command_arguments(Binary) ->
+    {Name, []} = gtp_entity:decode_string(Binary),
+    #known_command{command_name = Name}.
 
 encode_response_values(#{known := Known}) ->
     [gtp_entity:encode_boolean(Known)].

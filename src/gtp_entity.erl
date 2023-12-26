@@ -46,7 +46,7 @@ encode_move(#move{color = C, vertex = V}) ->
     [encode_color(C), " ", encode_vertex(V)].
 
 encode_string(String) ->
-    String.
+    iolist_to_binary(String).
 
 encode_list(EncodeFun, List) ->
     lists:join(<<" ">>, lists:map(EncodeFun, List)).
@@ -86,7 +86,8 @@ decode_move(Binary) ->
     {#move{color = Color, vertex = Vertex}, Rest}.
 
 decode_string(Binary) ->
-    {Binary, []}.
+    [String | Rest] = binary:split(Binary, <<" ">>, [trim]),
+    {String, Rest}.
 
 decode_list(DecodingFun, Binary) ->
     case DecodingFun(Binary) of
