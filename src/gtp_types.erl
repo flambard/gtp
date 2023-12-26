@@ -3,49 +3,33 @@
 -include("gtp.hrl").
 
 -export([
-    encode/1,
     encode_int/1,
-    decode_int/1,
     encode_float/1,
-    decode_float/1,
     encode_boolean/1,
-    decode_boolean/1,
     encode_color/1,
-    decode_color/1,
-    decode_list/2,
+    encode_vertex/1,
+    encode_move/1,
+    encode_string/1,
     encode_list/2
 ]).
 
-encode(Int) when is_integer(Int) ->
-    integer_to_binary(Int);
-encode(Float) when is_float(Float) ->
-    float_to_binary(Float);
-encode(true) ->
-    <<"true">>;
-encode(false) ->
-    <<"false">>;
-encode(white) ->
-    <<"white">>;
-encode(black) ->
-    <<"black">>;
-encode({Letter, Number}) ->
-    %% Vertex
-    [atom_to_binary(Letter), integer_to_binary(Number)];
-encode(#move{color = C, vertex = V}) ->
-    [encode(C), " ", encode(V)];
-encode(Tuple) when is_tuple(Tuple) ->
-    encode(tuple_to_list(Tuple));
-encode(List) when is_list(List) ->
-    lists:join(" ", [encode(E) || E <- List]);
-encode(String) when is_binary(String) ->
-    String.
+-export([
+    decode_int/1,
+    decode_float/1,
+    decode_boolean/1,
+    decode_color/1,
+    decode_vertex/1,
+    decode_move/1,
+    decode_string/1,
+    decode_list/2
+]).
 
 %%%
 %%% Encoding
 %%%
 
-encode_int(Integer) ->
-    integer_to_binary(Integer).
+encode_int(Int) ->
+    integer_to_binary(Int).
 
 encode_float(Float) ->
     float_to_binary(Float).
@@ -55,6 +39,15 @@ encode_boolean(false) -> <<"false">>.
 
 encode_color(black) -> <<"black">>;
 encode_color(white) -> <<"white">>.
+
+encode_vertex({Letter, Number}) ->
+    [atom_to_binary(Letter), integer_to_binary(Number)].
+
+encode_move(#move{color = C, vertex = V}) ->
+    [encode_color(C), " ", encode_vertex(V)].
+
+encode_string(String) ->
+    String.
 
 encode_list(EncodeFun, List) ->
     lists:join(<<" ">>, lists:map(EncodeFun, List)).
@@ -82,6 +75,17 @@ decode_color(Bin) ->
         [<<"black">> | Rest] -> {black, Rest};
         [<<"white">> | Rest] -> {white, Rest}
     end.
+
+decode_vertex(_Binary) ->
+    not_implemented.
+
+decode_move(Binary) ->
+    {Color, [R1]} = decode_color(Binary),
+    {Vertex, Rest} = decode_vertex(R1),
+    {#move{color = Color, vertex = Vertex}, Rest}.
+
+decode_string(Binary) ->
+    {Binary, []}.
 
 decode_list(DecodingFun, Binary) ->
     case DecodingFun(Binary) of
