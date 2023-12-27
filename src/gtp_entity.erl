@@ -9,7 +9,8 @@
     encode_vertex/1,
     encode_move/1,
     encode_string/1,
-    encode_list/2
+    encode_list/2,
+    encode_alternative/3
 ]).
 
 -export([
@@ -20,7 +21,8 @@
     decode_vertex/1,
     decode_move/1,
     decode_string/1,
-    decode_list/2
+    decode_list/2,
+    decode_alternative/3
 ]).
 
 %%%
@@ -50,6 +52,13 @@ encode_string(String) ->
 
 encode_list(EncodeFun, List) ->
     lists:join(<<" ">>, lists:map(EncodeFun, List)).
+
+encode_alternative(EncodeFun1, EncodeFun2, Value) ->
+    try EncodeFun1(Value) of
+        EncodedValue -> EncodedValue
+    catch
+        error:_Error -> EncodeFun2(Value)
+    end.
 
 %%%
 %%% Decoding
@@ -93,4 +102,11 @@ decode_list(DecodingFun, Binary) ->
     case DecodingFun(Binary) of
         {Value, []} -> [Value];
         {Value, [Rest]} -> [Value | decode_list(DecodingFun, Rest)]
+    end.
+
+decode_alternative(DecodeFun1, DecodeFun2, Binary) ->
+    try DecodeFun1(Binary) of
+        DecodedValue -> DecodedValue
+    catch
+        error:_Error -> DecodeFun2(Binary)
     end.
