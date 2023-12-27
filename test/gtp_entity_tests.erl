@@ -14,6 +14,13 @@ encode_vertex_test() ->
 decode_vertex_test() ->
     {{j, 11}, []} = gtp_entity:decode_vertex(<<"j11">>).
 
+encode_pass_test() ->
+    EncodedVertex = gtp_entity:encode_vertex(pass),
+    <<"pass">> = iolist_to_binary(EncodedVertex).
+
+decode_pass_test() ->
+    {pass, []} = gtp_entity:decode_vertex(<<"pass">>).
+
 encode_string_test() ->
     <<"Deadmau5">> = gtp_entity:encode_string("Deadmau5").
 

@@ -44,7 +44,9 @@ encode_color(black) -> <<"black">>;
 encode_color(white) -> <<"white">>.
 
 encode_vertex({Letter, Number}) ->
-    [atom_to_binary(Letter), integer_to_binary(Number)].
+    [atom_to_binary(Letter), integer_to_binary(Number)];
+encode_vertex(pass) ->
+    <<"pass">>.
 
 encode_move(#move{color = C, vertex = V}) ->
     [encode_color(C), " ", encode_vertex(V)].
@@ -89,6 +91,9 @@ decode_color(Bin) ->
         [<<"white">> | Rest] -> {white, Rest}
     end.
 
+decode_vertex(<<"pass", _/binary>> = Bin) ->
+    {<<"pass">>, Rest} = decode_string(Bin),
+    {pass, Rest};
 decode_vertex(<<Letter:1/binary, Number/binary>>) ->
     L = binary_to_atom(Letter),
     {N, Rest} = decode_int(Number),

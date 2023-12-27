@@ -2,7 +2,12 @@
 
 -type color() :: black | white.
 
--record(move, {color, vertex}).
+-type vertex() :: {atom(), pos_integer()} | pass.
+
+-record(move, {
+    color :: color(),
+    vertex :: vertex()
+}).
 
 %%%
 %%% Commands
