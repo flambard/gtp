@@ -10,11 +10,13 @@
 
 -record(protocol_version, {}).
 
--record(quit, {}).
+-record(name, {}).
 
 -record(known_command, {command_name :: binary()}).
 
 -record(list_commands, {}).
+
+-record(quit, {}).
 
 -record(time_left, {
     color :: color(),
@@ -24,9 +26,10 @@
 
 -type command() ::
     #protocol_version{}
-    | #quit{}
+    | #name{}
     | #known_command{}
     | #list_commands{}
+    | #quit{}
     | #time_left{}.
 
 %%%

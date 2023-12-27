@@ -39,6 +39,7 @@ split_binary_with_rest(Bin, Pattern) ->
 command_module(CommandName) when is_binary(CommandName) ->
     case CommandName of
         <<"protocol_version">> -> gtp_command_protocol_version;
+        <<"name">> -> gtp_command_name;
         <<"known_command">> -> gtp_command_known_command;
         <<"list_commands">> -> gtp_command_list_commands;
         <<"quit">> -> gtp_command_quit;
@@ -47,6 +48,7 @@ command_module(CommandName) when is_binary(CommandName) ->
 command_module(Command) ->
     case Command of
         #protocol_version{} -> gtp_command_protocol_version;
+        #name{} -> gtp_command_name;
         #known_command{} -> gtp_command_known_command;
         #list_commands{} -> gtp_command_list_commands;
         #quit{} -> gtp_command_quit;
