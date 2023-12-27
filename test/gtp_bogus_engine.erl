@@ -13,6 +13,8 @@ handle_command(#protocol_version{}) ->
     {ok, #{version_number => 2}};
 handle_command(#known_command{command_name = Name}) ->
     {ok, #{known => is_known_command(Name)}};
+handle_command(#list_commands{}) ->
+    {ok, #{commands => command_list()}};
 handle_command(#quit{}) ->
     {ok, #{}};
 handle_command(_Unknown) ->
@@ -23,8 +25,12 @@ handle_command(_Unknown) ->
 %%%
 
 is_known_command(Name) ->
-    lists:member(Name, [
+    lists:member(Name, command_list()).
+
+command_list() ->
+    [
         <<"protocol_version">>,
         <<"known_command">>,
+        <<"list_commands">>,
         <<"quit">>
-    ]).
+    ].

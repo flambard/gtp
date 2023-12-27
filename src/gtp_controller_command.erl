@@ -5,5 +5,5 @@
 
 -callback encode_command_arguments(Command :: command()) -> EncodedArguments :: [iodata()].
 
--callback decode_response_values(EncodedResponseValues :: [binary()]) ->
+-callback decode_response_values(EncodedResponseLines :: [binary()]) ->
     ResponseValues :: response_values().

@@ -14,6 +14,8 @@
 
 -record(known_command, {command_name :: binary()}).
 
+-record(list_commands, {}).
+
 -record(time_left, {
     color :: color(),
     time :: non_neg_integer(),
@@ -24,6 +26,7 @@
     #protocol_version{}
     | #quit{}
     | #known_command{}
+    | #list_commands{}
     | #time_left{}.
 
 %%%

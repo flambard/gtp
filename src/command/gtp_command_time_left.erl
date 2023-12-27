@@ -34,5 +34,5 @@ decode_command_arguments(Bin) ->
 encode_response_values(#{}) ->
     [].
 
-decode_response_values([]) ->
+decode_response_values([<<>>]) ->
     #{}.

@@ -65,3 +65,24 @@ command_with_multiple_arguments_test() ->
             time = 30,
             stones = 0
         }).
+
+command_with_multiline_response_test() ->
+    {ok, ChannelA} = gtp_erlang_channel:start_link(),
+    {ok, ChannelB} = gtp_erlang_channel:start_link(),
+    ok = gtp_erlang_channel:connect(ChannelA, ChannelB),
+
+    {ok, _Engine} = gtp_engine:start_link(
+        gtp_bogus_engine, make_ref(), gtp_erlang_channel, ChannelB, []
+    ),
+
+    {ok, Controller} = gtp_controller:start_link(gtp_erlang_channel, ChannelA, []),
+
+    {ok, #success{values = #{commands := Commands}}} =
+        gtp_controller:send_command(Controller, #list_commands{}, [{id, 19}]),
+
+    [
+        <<"protocol_version">>,
+        <<"known_command">>,
+        <<"list_commands">>,
+        <<"quit">>
+    ] = Commands.
