@@ -57,3 +57,45 @@ decode_alternative_2_test() ->
         fun gtp_entity:decode_string/1,
         <<"resign">>
     ).
+
+encode_multiline_string_test() ->
+    EncodedString = gtp_entity:encode_multiline(
+        fun gtp_entity:encode_string/1,
+        ["Ein", "Zwei", "Drei"]
+    ),
+    <<"Ein\nZwei\nDrei">> = iolist_to_binary(EncodedString).
+
+encode_multiline_list_of_strings_test() ->
+    EncodedString = gtp_entity:encode_multiline(
+        fun(List) -> gtp_entity:encode_list(fun gtp_entity:encode_string/1, List) end,
+        [
+            ["One", "Ring", "to", "rule", "them", "all"],
+            ["One", "Ring", "to", "find", "them"],
+            ["One", "Ring", "to", "bring", "them", "all"],
+            ["and", "in", "the", "darkness", "bind", "them"]
+        ]
+    ),
+    <<"One Ring to rule them all\nOne Ring to find them\nOne Ring to bring them all\nand in the darkness bind them">> =
+        iolist_to_binary(EncodedString).
+
+decode_multiline_string_test() ->
+    [<<"Ein">>, <<"Zwei">>, <<"Drei">>] = gtp_entity:decode_multiline(
+        fun gtp_entity:decode_string/1,
+        [<<"Ein">>, <<"Zwei">>, <<"Drei">>]
+    ).
+
+decode_multiline_list_of_strings_test() ->
+    [
+        [<<"One">>, <<"Ring">>, <<"to">>, <<"rule">>, <<"them">>, <<"all">>],
+        [<<"One">>, <<"Ring">>, <<"to">>, <<"find">>, <<"them">>],
+        [<<"One">>, <<"Ring">>, <<"to">>, <<"bring">>, <<"them">>, <<"all">>],
+        [<<"and">>, <<"in">>, <<"the">>, <<"darkness">>, <<"bind">>, <<"them">>]
+    ] = gtp_entity:decode_multiline(
+        fun(Line) -> gtp_entity:decode_list(fun gtp_entity:decode_string/1, Line) end,
+        [
+            <<"One Ring to rule them all">>,
+            <<"One Ring to find them">>,
+            <<"One Ring to bring them all">>,
+            <<"and in the darkness bind them">>
+        ]
+    ).

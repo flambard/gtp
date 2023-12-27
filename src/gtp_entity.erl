@@ -10,7 +10,8 @@
     encode_move/1,
     encode_string/1,
     encode_list/2,
-    encode_alternative/3
+    encode_alternative/3,
+    encode_multiline/2
 ]).
 
 -export([
@@ -22,7 +23,8 @@
     decode_move/1,
     decode_string/1,
     decode_list/2,
-    decode_alternative/3
+    decode_alternative/3,
+    decode_multiline/2
 ]).
 
 %%%
@@ -59,6 +61,9 @@ encode_alternative(EncodeFun1, EncodeFun2, Value) ->
     catch
         error:_Error -> EncodeFun2(Value)
     end.
+
+encode_multiline(EncodeFun, List) ->
+    lists:join(<<"\n">>, lists:map(EncodeFun, List)).
 
 %%%
 %%% Decoding
@@ -114,3 +119,12 @@ decode_alternative(DecodeFun1, DecodeFun2, Binary) ->
     catch
         error:_Error -> DecodeFun2(Binary)
     end.
+
+decode_multiline(DecodeFun, Lines) ->
+    lists:map(
+        fun(Binary) ->
+            {Value, []} = DecodeFun(Binary),
+            Value
+        end,
+        Lines
+    ).
