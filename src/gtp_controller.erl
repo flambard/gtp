@@ -66,6 +66,7 @@ send_command(Controller, Command, Options) ->
 
 init([ChannelMod, Channel]) ->
     State = #{
+        response_buffer => [],
         reply_to => undefined,
         message_id => undefined,
         command_module => undefined,
@@ -84,7 +85,7 @@ handle_call({send_command, Command, Options}, From, State) ->
     CommandMod = gtp_command:command_module(Command),
     Name = CommandMod:name(),
     Args = [[<<" ">>, A] || A <- CommandMod:encode_command_arguments(Command)],
-    Message = [gtp_command:encode_optional_id(ID), Name, Args],
+    Message = [gtp_command:encode_optional_id(ID), Name, Args, <<"\n">>],
 
     case ChannelMod:send_message(Channel, Message) of
         {error, Reason} -> {reply, {error, {channel_send, Reason}}, State};
@@ -94,16 +95,21 @@ handle_call({send_command, Command, Options}, From, State) ->
 handle_cast(_Ignored, State) ->
     {noreply, State}.
 
-handle_info({gtp, Message}, State) ->
+handle_info({gtp, <<>>}, State) ->
     #{
+        response_buffer := Buffer,
         reply_to := From,
         message_id := ID,
         command_module := CommandMod
     } = State,
-
+    Message = lists:reverse(Buffer),
     {ID, Response} = gtp_response:decode(CommandMod, Message),
     ok = gen_server:reply(From, {ok, Response}),
-    {noreply, State#{reply_to := undefined, message_id := undefined}}.
+    {noreply, State#{response_buffer := [], reply_to := undefined, message_id := undefined}};
+handle_info({gtp, Line}, State) ->
+    #{response_buffer := Buffer} = State,
+    %% TODO: preprocess each line as they arrive
+    {noreply, State#{response_buffer := [Line | Buffer]}}.
 
 terminate(_Reason, State) ->
     #{

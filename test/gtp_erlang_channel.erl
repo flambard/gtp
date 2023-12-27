@@ -74,5 +74,14 @@ handle_info({connect, Peer}, State) ->
     {noreply, State#{peer := Peer}};
 handle_info({transport, Message}, State) ->
     #{controlling_process := Pid} = State,
-    ok = gtp_channel:recv_message(Pid, Message),
+    ok = recv_message_lines(Pid, Message),
     {noreply, State}.
+
+recv_message_lines(Pid, Message) ->
+    [Line, Rest] = binary:split(Message, <<"\n">>),
+    ok = gtp_channel:recv_message(Pid, Line),
+    case Rest of
+        <<>> -> ok;
+        <<"\n">> -> gtp_channel:recv_message(Pid, <<>>);
+        MoreData -> recv_message_lines(Pid, MoreData)
+    end.
