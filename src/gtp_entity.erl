@@ -98,10 +98,14 @@ decode_string(Binary) ->
     [String | Rest] = binary:split(Binary, <<" ">>, [trim]),
     {String, Rest}.
 
-decode_list(DecodingFun, Binary) ->
-    case DecodingFun(Binary) of
+decode_list(DecodeFun, Binary) ->
+    DecodedList = decode_list_(DecodeFun, Binary),
+    {DecodedList, []}.
+
+decode_list_(DecodeFun, Binary) ->
+    case DecodeFun(Binary) of
         {Value, []} -> [Value];
-        {Value, [Rest]} -> [Value | decode_list(DecodingFun, Rest)]
+        {Value, [Rest]} -> [Value | decode_list_(DecodeFun, Rest)]
     end.
 
 decode_alternative(DecodeFun1, DecodeFun2, Binary) ->
