@@ -21,10 +21,8 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - uses: awalsh128/cache-apt-pkgs-action@latest
-      with:
-        packages: gnugo
-        version: 1.0
+    - name: Install GnuGo
+      run: sudo apt-get install gnugo
 
     - name: Compile
       run: rebar3 compile
