@@ -102,7 +102,13 @@ handle_info({gtp, <<>>}, State) ->
     Message = lists:reverse(Buffer),
     {ID, Response} = gtp_response:decode(CommandMod, Message),
     ok = gen_server:reply(From, {ok, Response}),
-    {noreply, State#{response_buffer := [], reply_to := undefined, message_id := undefined}};
+    NewState = State#{
+        response_buffer := [],
+        reply_to := undefined,
+        message_id := undefined,
+        command_module := undefined
+    },
+    {noreply, NewState};
 handle_info({gtp, Line}, State) ->
     #{response_buffer := Buffer} = State,
     %% TODO: preprocess each line as they arrive
