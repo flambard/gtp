@@ -66,13 +66,15 @@ handle_info({gtp, CommandMessage}, State) ->
 
     {ID, Command, CommandMod} = gtp_command:decode(CommandMessage),
 
-    ResponseMessage =
+    Response =
         case EngineMod:handle_command(Engine, Command) of
-            {error, Error} -> gtp_response:encode_error(ID, Error);
-            {ok, ResponseValues} -> gtp_response:encode_success(ID, ResponseValues, CommandMod)
+            {error, Error} -> #failure{error_message = Error};
+            {ok, ResponseValues} -> #success{values = ResponseValues}
         end,
 
+    ResponseMessage = gtp_response:encode(ID, Response, CommandMod),
     ok = ChannelMod:send_message(Channel, ResponseMessage),
+
     case Command of
         #quit{} -> {stop, normal, State};
         _Other -> {noreply, State}

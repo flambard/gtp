@@ -2,8 +2,7 @@
 -include("gtp.hrl").
 
 -export([
-    encode_success/3,
-    encode_error/2,
+    encode/3,
     decode/2
 ]).
 
@@ -11,11 +10,10 @@
 %%% Encoding
 %%%
 
-encode_success(ID, ResponseValues, CommandMod) ->
+encode(ID, #success{values = ResponseValues}, CommandMod) ->
     Values = [[<<" ">>, V] || V <- CommandMod:encode_response_values(ResponseValues)],
-    [<<"=">>, encode_optional_id(ID), Values, <<"\n\n">>].
-
-encode_error(ID, Error) ->
+    [<<"=">>, encode_optional_id(ID), Values, <<"\n\n">>];
+encode(ID, #failure{error_message = Error}, _CommandMod) ->
     [<<"?">>, encode_optional_id(ID), <<" ">>, Error, <<"\n\n">>].
 
 encode_optional_id(undefined) -> <<>>;
