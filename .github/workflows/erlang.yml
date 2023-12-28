@@ -21,6 +21,9 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
+    - name: Install GnuGo
+      run: sudo apt install gnugo
+
     - name: Compile
       run: rebar3 compile
 
