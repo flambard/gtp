@@ -4,14 +4,14 @@
 -include("gtp.hrl").
 
 -export([
-    name/0,
+    command_name/0,
     encode_command_arguments/1,
     decode_command_arguments/1,
     encode_response_values/1,
     decode_response_values/1
 ]).
 
-name() ->
+command_name() ->
     <<"time_left">>.
 
 encode_command_arguments(#time_left{color = Color, time = Time, stones = Stones}) ->

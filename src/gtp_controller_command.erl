@@ -1,7 +1,7 @@
 -module(gtp_controller_command).
 -include("gtp.hrl").
 
--callback name() -> CommandName :: binary().
+-callback command_name() -> CommandName :: binary().
 
 -callback encode_command_arguments(Command :: command()) -> EncodedArguments :: [iodata()].
 

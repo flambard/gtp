@@ -4,7 +4,7 @@
 -include("gtp.hrl").
 
 -export([
-    name/0,
+    command_name/0,
     decode_command_arguments/1,
     decode_response_values/1,
     encode_command_arguments/1,
@@ -18,7 +18,7 @@
 %   boolean known
 % fails: never
 
-name() -> <<"known_command">>.
+command_name() -> <<"known_command">>.
 
 encode_command_arguments(#known_command{command_name = Name}) ->
     [gtp_entity:encode_string(Name)].

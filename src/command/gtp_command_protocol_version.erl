@@ -4,7 +4,7 @@
 -include("gtp.hrl").
 
 -export([
-    name/0,
+    command_name/0,
     encode_command_arguments/1,
     decode_command_arguments/1,
     encode_response_values/1,
@@ -17,7 +17,7 @@
 %   int version_number
 % fails: never
 
-name() ->
+command_name() ->
     <<"protocol_version">>.
 
 encode_command_arguments(#protocol_version{}) ->

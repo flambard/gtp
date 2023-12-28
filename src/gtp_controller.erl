@@ -83,7 +83,7 @@ handle_call({send_command, Command, Options}, From, State) ->
 
     ID = proplists:get_value(id, Options),
     CommandMod = gtp_command:command_module(Command),
-    Name = CommandMod:name(),
+    Name = CommandMod:command_name(),
     Args = [[<<" ">>, A] || A <- CommandMod:encode_command_arguments(Command)],
     Message = [gtp_command:encode_optional_id(ID), Name, Args, <<"\n">>],
 
