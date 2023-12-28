@@ -82,7 +82,8 @@ handle_call({send_command, Command, Options}, From, State) ->
     } = State,
 
     ID = proplists:get_value(id, Options),
-    {Message, CommandMod} = gtp_command:encode(ID, Command),
+    ExtensionCommandMod = proplists:get_value(command_module, Options),
+    {Message, CommandMod} = gtp_command:encode(ID, Command, ExtensionCommandMod),
 
     case ChannelMod:send_message(Channel, Message) of
         {error, Reason} -> {reply, {error, {channel_send, Reason}}, State};

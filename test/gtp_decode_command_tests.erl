@@ -4,10 +4,10 @@
 
 decode_command_with_id_test() ->
     Message = <<"276 protocol_version">>,
-    Result = gtp_command:decode(Message),
+    Result = gtp_command:decode(Message, #{}),
     {276, #protocol_version{}, gtp_command_protocol_version} = Result.
 
 decode_command_without_id_test() ->
     Message = <<"quit">>,
-    Result = gtp_command:decode(Message),
+    Result = gtp_command:decode(Message, #{}),
     {undefined, #quit{}, gtp_command_quit} = Result.

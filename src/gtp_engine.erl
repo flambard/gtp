@@ -9,7 +9,8 @@
 
 %% API
 -export([
-    start_link/5
+    start_link/5,
+    register_command_module/2
 ]).
 
 %% gen_server callbacks
@@ -37,6 +38,9 @@ start_link(EngineMod, Engine, ChannelMod, Channel, Options) ->
             Other
     end.
 
+register_command_module(Server, ExtensionCommandModule) ->
+    gen_server:call(Server, {register_command_module, ExtensionCommandModule}).
+
 %%%
 %%% gen_server callbacks
 %%%
@@ -46,12 +50,16 @@ init([EngineMod, Engine, ChannelMod, Channel]) ->
         channel_module => ChannelMod,
         channel => Channel,
         engine_module => EngineMod,
-        engine => Engine
+        engine => Engine,
+        extension_commands => #{}
     },
     {ok, State}.
 
-handle_call(_Ignored, _From, State) ->
-    {reply, ok, State}.
+handle_call({register_command_module, CommandMod}, _From, State) ->
+    #{extension_commands := ExtensionCommands} = State,
+    Name = CommandMod:command_name(),
+    NewState = State#{extension_commands := ExtensionCommands#{Name => CommandMod}},
+    {reply, ok, NewState}.
 
 handle_cast(_Ignored, State) ->
     {noreply, State}.
@@ -61,10 +69,11 @@ handle_info({gtp, CommandMessage}, State) ->
         channel := Channel,
         channel_module := ChannelMod,
         engine_module := EngineMod,
-        engine := Engine
+        engine := Engine,
+        extension_commands := ExtensionCommands
     } = State,
 
-    {ID, Command, CommandMod} = gtp_command:decode(CommandMessage),
+    {ID, Command, CommandMod} = gtp_command:decode(CommandMessage, ExtensionCommands),
 
     Response =
         case EngineMod:handle_command(Engine, Command) of
