@@ -13,11 +13,22 @@
 %%% Commands
 %%%
 
+-define(COMMAND_MODULES, #{
+    <<"protocol_version">> => gtp_command_protocol_version,
+    <<"name">> => gtp_command_name,
+    <<"known_command">> => gtp_command_known_command,
+    <<"list_commands">> => gtp_command_list_commands,
+    <<"quit">> => gtp_command_quit,
+    <<"time_left">> => gtp_command_time_left
+}).
+
 -record(protocol_version, {}).
 
 -record(name, {}).
 
--record(known_command, {command_name :: binary()}).
+-record(known_command, {
+    command_name :: binary()
+}).
 
 -record(list_commands, {}).
 
