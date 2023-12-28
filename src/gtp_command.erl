@@ -26,20 +26,12 @@ decode(Binary) ->
     {IdOrCommand, Rest} = split_binary_with_rest(Binary, <<" ">>),
     case string:to_integer(binary_to_list(IdOrCommand)) of
         {error, no_integer} ->
-            #{
-                id => undefined,
-                command => IdOrCommand,
-                module => command_module(IdOrCommand),
-                arguments => Rest
-            };
+            CommandMod = command_module(IdOrCommand),
+            {undefined, CommandMod:decode_command_arguments(Rest), CommandMod};
         {ID, []} ->
             {Command, Args} = split_binary_with_rest(Rest, <<" ">>),
-            #{
-                id => ID,
-                command => Command,
-                module => command_module(Command),
-                arguments => Args
-            }
+            CommandMod = command_module(Command),
+            {ID, CommandMod:decode_command_arguments(Args), CommandMod}
     end.
 
 split_binary_with_rest(Bin, Pattern) ->

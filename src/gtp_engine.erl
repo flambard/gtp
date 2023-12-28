@@ -64,21 +64,12 @@ handle_info({gtp, CommandMessage}, State) ->
         engine := Engine
     } = State,
 
-    #{
-        id := ID,
-        module := CommandMod,
-        arguments := CommandArgs
-    } = gtp_command:decode(CommandMessage),
-
-    Command = CommandMod:decode_command_arguments(CommandArgs),
+    {ID, Command, CommandMod} = gtp_command:decode(CommandMessage),
 
     ResponseMessage =
         case EngineMod:handle_command(Engine, Command) of
-            {error, Error} ->
-                gtp_response:encode_error(ID, Error);
-            {ok, ResponseValues} ->
-                EncodedResponseValues = CommandMod:encode_response_values(ResponseValues),
-                gtp_response:encode_success(ID, EncodedResponseValues)
+            {error, Error} -> gtp_response:encode_error(ID, Error);
+            {ok, ResponseValues} -> gtp_response:encode_success(ID, ResponseValues, CommandMod)
         end,
 
     ok = ChannelMod:send_message(Channel, ResponseMessage),
