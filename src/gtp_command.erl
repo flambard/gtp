@@ -2,18 +2,19 @@
 -include("gtp.hrl").
 
 -export([
-    encode/3,
-    decode/1,
-    command_module/1
+    encode/2,
+    decode/1
 ]).
 
 %%%
 %%% Encoding
 %%%
 
-encode(ID, Name, EncodedArguments) ->
-    Args = [[<<" ">>, A] || A <- EncodedArguments],
-    [encode_optional_id(ID), Name, Args, <<"\n">>].
+encode(ID, Command) ->
+    CommandMod = command_module(Command),
+    Name = CommandMod:command_name(),
+    Args = [[<<" ">>, A] || A <- CommandMod:encode_command_arguments(Command)],
+    {[encode_optional_id(ID), Name, Args, <<"\n">>], CommandMod}.
 
 encode_optional_id(undefined) -> <<"">>;
 encode_optional_id(ID) -> [integer_to_binary(ID), <<" ">>].
