@@ -22,7 +22,7 @@ jobs:
     - uses: actions/checkout@v3
 
     - name: Install GnuGo
-      run: apt-get update && apt-get install gnugo && dpkg -L gnugo
+      run: apt-get update && apt-get install gnugo && echo "/usr/games" >> $GITHUB_PATH
 
     - name: Compile
       run: rebar3 compile
