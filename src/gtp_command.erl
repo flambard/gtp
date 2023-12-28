@@ -2,15 +2,27 @@
 -include("gtp.hrl").
 
 -export([
-    encode_optional_id/1,
-    decode_command_message/1,
+    encode/3,
+    decode/1,
     command_module/1
 ]).
+
+%%%
+%%% Encoding
+%%%
+
+encode(ID, Name, EncodedArguments) ->
+    Args = [[<<" ">>, A] || A <- EncodedArguments],
+    [encode_optional_id(ID), Name, Args, <<"\n">>].
 
 encode_optional_id(undefined) -> <<"">>;
 encode_optional_id(ID) -> [integer_to_binary(ID), <<" ">>].
 
-decode_command_message(Binary) ->
+%%%
+%%% Decoding
+%%%
+
+decode(Binary) ->
     {IdOrCommand, Rest} = split_binary_with_rest(Binary, <<" ">>),
     case string:to_integer(binary_to_list(IdOrCommand)) of
         {error, no_integer} ->

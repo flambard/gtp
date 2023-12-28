@@ -64,13 +64,11 @@ handle_info({gtp, CommandMessage}, State) ->
         engine := Engine
     } = State,
 
-    CommandInfo = gtp_command:decode_command_message(CommandMessage),
-
     #{
         id := ID,
         module := CommandMod,
         arguments := CommandArgs
-    } = CommandInfo,
+    } = gtp_command:decode(CommandMessage),
 
     Command = CommandMod:decode_command_arguments(CommandArgs),
 
