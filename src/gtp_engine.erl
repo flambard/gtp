@@ -73,20 +73,26 @@ handle_info({gtp, CommandMessage}, State) ->
         extension_commands := ExtensionCommands
     } = State,
 
-    {ID, Command, CommandMod} = gtp_command:decode(CommandMessage, ExtensionCommands),
+    case preprocess(CommandMessage) of
+        discard ->
+            %% Discarding empty or whitespace-only line
+            {noreply, State};
+        {ok, ProcessedMessage} ->
+            {ID, Command, CommandMod} = gtp_command:decode(ProcessedMessage, ExtensionCommands),
 
-    Response =
-        case EngineMod:handle_command(Engine, Command) of
-            {error, Error} -> #failure{error_message = Error};
-            {ok, ResponseValues} -> #success{values = ResponseValues}
-        end,
+            Response =
+                case EngineMod:handle_command(Engine, Command) of
+                    {error, Error} -> #failure{error_message = Error};
+                    {ok, ResponseValues} -> #success{values = ResponseValues}
+                end,
 
-    ResponseMessage = gtp_response:encode(ID, Response, CommandMod),
-    ok = ChannelMod:send_message(Channel, ResponseMessage),
+            ResponseMessage = gtp_response:encode(ID, Response, CommandMod),
+            ok = ChannelMod:send_message(Channel, ResponseMessage),
 
-    case Command of
-        #quit{} -> {stop, normal, State};
-        _Other -> {noreply, State}
+            case Command of
+                #quit{} -> {stop, normal, State};
+                _Other -> {noreply, State}
+            end
     end.
 
 terminate(_Reason, State) ->
@@ -95,3 +101,23 @@ terminate(_Reason, State) ->
         channel_module := ChannelMod
     } = State,
     ChannelMod:stop(Channel).
+
+%%%
+%%% Private functions
+%%%
+
+preprocess(Binary) ->
+    B1 = gtp_protocol:remove_control_characters(Binary),
+    B2 = remove_comment(B1),
+    B3 = gtp_protocol:convert_tabs_to_spaces(B2),
+    discard_empty_line(B3).
+
+remove_comment(Binary) ->
+    [WithoutComment | _Ignored] = binary:split(Binary, <<"#">>),
+    WithoutComment.
+
+discard_empty_line(Binary) ->
+    case binary:replace(Binary, <<" ">>, <<>>, [global]) of
+        <<>> -> discard;
+        _NotEmpty -> {ok, Binary}
+    end.

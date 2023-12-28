@@ -112,8 +112,8 @@ handle_info({gtp, <<>>}, State) ->
     {noreply, NewState};
 handle_info({gtp, Line}, State) ->
     #{response_buffer := Buffer} = State,
-    %% TODO: preprocess each line as they arrive
-    {noreply, State#{response_buffer := [Line | Buffer]}}.
+    ProcessedLine = preprocess(Line),
+    {noreply, State#{response_buffer := [ProcessedLine | Buffer]}}.
 
 terminate(_Reason, State) ->
     #{
@@ -121,3 +121,7 @@ terminate(_Reason, State) ->
         channel_module := ChannelMod
     } = State,
     ChannelMod:stop(Channel).
+
+preprocess(Binary) ->
+    B1 = gtp_protocol:remove_control_characters(Binary),
+    gtp_protocol:convert_tabs_to_spaces(B1).
