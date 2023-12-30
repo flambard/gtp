@@ -5,6 +5,7 @@
 %% API
 -export([
     start_link/0,
+    open_port/2,
     open_port/3
 ]).
 
@@ -29,6 +30,9 @@
 
 start_link() ->
     gen_server:start_link(?MODULE, [], []).
+
+open_port(Channel, PortName) ->
+    open_port(Channel, PortName, []).
 
 open_port(Channel, PortName, PortSettings) ->
     gen_server:call(Channel, {open_port, PortName, PortSettings}).
@@ -58,7 +62,7 @@ init([]) ->
     {ok, State}.
 
 handle_call({open_port, PortName, PortSettings}, _From, State) ->
-    Port = open_port(PortName, PortSettings),
+    Port = erlang:open_port(PortName, [binary, {line, 1024} | PortSettings]),
     {reply, ok, State#{port := Port}};
 handle_call({controlling_process, Pid}, _From, State) ->
     {reply, ok, State#{controlling_process := Pid}};

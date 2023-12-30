@@ -8,7 +8,7 @@
 
 connect_and_quit_test() ->
     {ok, Channel} = gtp_port_channel:start_link(),
-    ok = gtp_port_channel:open_port(Channel, {spawn, "gnugo --mode gtp"}, [binary, {line, 1024}]),
+    ok = gtp_port_channel:open_port(Channel, {spawn, "gnugo --mode gtp"}),
 
     {ok, Controller} = gtp_controller:start_link(gtp_port_channel, Channel, []),
 
@@ -22,7 +22,7 @@ connect_and_quit_test() ->
 
 showboard_started_game_test() ->
     {ok, Channel} = gtp_port_channel:start_link(),
-    ok = gtp_port_channel:open_port(Channel, {spawn, "gnugo --mode gtp"}, [binary, {line, 1024}]),
+    ok = gtp_port_channel:open_port(Channel, {spawn, "gnugo --mode gtp"}),
 
     {ok, Controller} = gtp_controller:start_link(gtp_port_channel, Channel, []),
 
