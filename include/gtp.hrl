@@ -54,6 +54,7 @@
     | #known_command{}
     | #list_commands{}
     | #quit{}
+    | #boardsize{}
     | #time_left{}
     | #showboard{}.
 
