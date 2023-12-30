@@ -81,26 +81,31 @@ encode_multiline(EncodeFun, List) ->
 %%% Decoding
 %%%
 
+-spec decode_int(binary()) -> {non_neg_integer(), [binary()]}.
 decode_int(Binary) ->
     [IntBin | Rest] = binary:split(Binary, <<" ">>, [trim]),
     {binary_to_integer(IntBin), Rest}.
 
+-spec decode_float(binary()) -> {float(), [binary()]}.
 decode_float(Binary) ->
     [FloatBin | Rest] = binary:split(Binary, <<" ">>, [trim]),
     {binary_to_float(FloatBin), Rest}.
 
+-spec decode_boolean(binary()) -> {boolean(), [binary()]}.
 decode_boolean(Binary) ->
     case binary:split(Binary, <<" ">>, [trim]) of
         [<<"true">> | Rest] -> {true, Rest};
         [<<"false">> | Rest] -> {false, Rest}
     end.
 
+-spec decode_color(binary()) -> {color(), [binary()]}.
 decode_color(Bin) ->
     case binary:split(Bin, <<" ">>, [trim]) of
         [<<"black">> | Rest] -> {black, Rest};
         [<<"white">> | Rest] -> {white, Rest}
     end.
 
+-spec decode_vertex(binary()) -> {vertex(), [binary()]}.
 decode_vertex(<<"pass", _/binary>> = Bin) ->
     {<<"pass">>, Rest} = decode_string(Bin),
     {pass, Rest};
@@ -109,15 +114,18 @@ decode_vertex(<<Letter:1/binary, Number/binary>>) ->
     {N, Rest} = decode_int(Number),
     {{L, N}, Rest}.
 
+-spec decode_move(binary()) -> {#move{}, [binary()]}.
 decode_move(Binary) ->
     {Color, [R1]} = decode_color(Binary),
     {Vertex, Rest} = decode_vertex(R1),
     {#move{color = Color, vertex = Vertex}, Rest}.
 
+-spec decode_string(binary()) -> {binary(), [binary()]}.
 decode_string(Binary) ->
     [String | Rest] = binary:split(Binary, <<" ">>, []),
     {String, Rest}.
 
+-spec decode_list(DecodeFun :: function(), binary()) -> {list(), [binary()]}.
 decode_list(DecodeFun, Binary) ->
     DecodedList = decode_list_(DecodeFun, Binary),
     {DecodedList, []}.
@@ -128,6 +136,8 @@ decode_list_(DecodeFun, Binary) ->
         {Value, [Rest]} -> [Value | decode_list_(DecodeFun, Rest)]
     end.
 
+-spec decode_alternative(DecodeFun1 :: function(), DecodeFun2 :: function(), binary()) ->
+    {term(), [binary()]}.
 decode_alternative(DecodeFun1, DecodeFun2, Binary) ->
     try DecodeFun1(Binary) of
         DecodedValue -> DecodedValue
@@ -135,6 +145,7 @@ decode_alternative(DecodeFun1, DecodeFun2, Binary) ->
         error:_Error -> DecodeFun2(Binary)
     end.
 
+-spec decode_multiline(DecodeFun :: function(), [binary()]) -> [term()].
 decode_multiline(DecodeFun, Lines) ->
     lists:map(
         fun(Binary) ->
