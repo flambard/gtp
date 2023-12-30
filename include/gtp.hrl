@@ -13,17 +13,6 @@
 %%% Commands
 %%%
 
--define(COMMAND_MODULES, #{
-    <<"protocol_version">> => gtp_command_protocol_version,
-    <<"name">> => gtp_command_name,
-    <<"known_command">> => gtp_command_known_command,
-    <<"list_commands">> => gtp_command_list_commands,
-    <<"quit">> => gtp_command_quit,
-    <<"boardsize">> => gtp_command_boardsize,
-    <<"time_left">> => gtp_command_time_left,
-    <<"showboard">> => gtp_command_showboard
-}).
-
 -record(protocol_version, {}).
 
 -record(name, {}).
@@ -38,6 +27,20 @@
 
 -record(boardsize, {
     size :: pos_integer()
+}).
+
+-record(clear_board, {}).
+
+-record(fixed_handicap, {
+    number_of_stones :: non_neg_integer()
+}).
+
+-record(play, {
+    move :: #move{}
+}).
+
+-record(genmove, {
+    color :: color()
 }).
 
 -record(time_left, {
@@ -55,8 +58,27 @@
     | #list_commands{}
     | #quit{}
     | #boardsize{}
+    | #clear_board{}
+    | #fixed_handicap{}
+    | #play{}
+    | #genmove{}
     | #time_left{}
     | #showboard{}.
+
+-define(COMMAND_MODULES, #{
+    <<"protocol_version">> => gtp_command_protocol_version,
+    <<"name">> => gtp_command_name,
+    <<"known_command">> => gtp_command_known_command,
+    <<"list_commands">> => gtp_command_list_commands,
+    <<"quit">> => gtp_command_quit,
+    <<"boardsize">> => gtp_command_boardsize,
+    <<"clear_board">> => gtp_command_clear_board,
+    <<"fixed_handicap">> => gtp_command_fixed_handicap,
+    <<"play">> => gtp_command_play,
+    <<"genmove">> => gtp_command_genmove,
+    <<"time_left">> => gtp_command_time_left,
+    <<"showboard">> => gtp_command_showboard
+}).
 
 %%%
 %%% Responses
