@@ -95,7 +95,7 @@ decode_vertex(<<"pass", _/binary>> = Bin) ->
     {<<"pass">>, Rest} = decode_string(Bin),
     {pass, Rest};
 decode_vertex(<<Letter:1/binary, Number/binary>>) ->
-    L = binary_to_atom(Letter),
+    L = binary_to_atom(string:lowercase(Letter)),
     {N, Rest} = decode_int(Number),
     {{L, N}, Rest}.
 
