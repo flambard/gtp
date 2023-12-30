@@ -26,6 +26,15 @@
 %%% API
 %%%
 
+-spec start_link(
+    EngineMod :: atom(),
+    Engine :: term(),
+    ChannelMod :: atom(),
+    Channel :: pid(),
+    Options :: proplists:proplist()
+) ->
+    {ok, EngineServer :: pid()} | {error, Reason :: term()}.
+
 start_link(EngineMod, Engine, ChannelMod, Channel, Options) ->
     Args = [EngineMod, Engine, ChannelMod, Channel],
     case gen_server:start_link(?MODULE, Args, Options) of
@@ -37,6 +46,12 @@ start_link(EngineMod, Engine, ChannelMod, Channel, Options) ->
         Other ->
             Other
     end.
+
+-spec register_extension_commands(
+    EngineServer :: pid(),
+    ExtensionCommands :: #{Name :: binary() => Module :: atom()}
+) ->
+    ok.
 
 register_extension_commands(Server, ExtensionCommands) ->
     gen_server:call(Server, {register_extension_commands, ExtensionCommands}).
