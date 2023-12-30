@@ -25,7 +25,8 @@ decode_pass_test() ->
     {pass, []} = gtp_entity:decode_vertex(<<"pass">>).
 
 encode_string_test() ->
-    <<"Deadmau5">> = gtp_entity:encode_string("Deadmau5").
+    EncodedString = gtp_entity:encode_string("Deadmau5"),
+    <<"Deadmau5">> = iolist_to_binary(EncodedString).
 
 decode_string_test() ->
     {<<"Hello">>, [<<"world">>]} = gtp_entity:decode_string(<<"Hello world">>).

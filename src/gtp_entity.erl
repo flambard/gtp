@@ -31,32 +31,41 @@
 %%% Encoding
 %%%
 
+-spec encode_int(Int :: non_neg_integer()) -> iodata().
 encode_int(Int) ->
     integer_to_binary(Int).
 
+-spec encode_float(Float :: float()) -> iodata().
 encode_float(Float) ->
     float_to_binary(Float).
 
+-spec encode_boolean(boolean()) -> iodata().
 encode_boolean(true) -> <<"true">>;
 encode_boolean(false) -> <<"false">>.
 
+-spec encode_color(color()) -> iodata().
 encode_color(black) -> <<"black">>;
 encode_color(white) -> <<"white">>.
 
+-spec encode_vertex(vertex()) -> iodata().
 encode_vertex({Letter, Number}) ->
     [atom_to_binary(Letter), integer_to_binary(Number)];
 encode_vertex(pass) ->
     <<"pass">>.
 
+-spec encode_move(#move{}) -> iolist().
 encode_move(#move{color = C, vertex = V}) ->
     [encode_color(C), " ", encode_vertex(V)].
 
+-spec encode_string(String :: iodata()) -> iodata().
 encode_string(String) ->
-    iolist_to_binary(String).
+    String.
 
+-spec encode_list(EncodeFun :: function(), list()) -> iodata().
 encode_list(EncodeFun, List) ->
     lists:join(<<" ">>, lists:map(EncodeFun, List)).
 
+-spec encode_alternative(EncodeFun1 :: function(), EncodeFun2 :: function(), term()) -> iodata().
 encode_alternative(EncodeFun1, EncodeFun2, Value) ->
     try EncodeFun1(Value) of
         EncodedValue -> EncodedValue
@@ -64,6 +73,7 @@ encode_alternative(EncodeFun1, EncodeFun2, Value) ->
         error:_Error -> EncodeFun2(Value)
     end.
 
+-spec encode_multiline(EncodeFun :: function(), list()) -> iodata().
 encode_multiline(EncodeFun, List) ->
     lists:join(<<"\n">>, lists:map(EncodeFun, List)).
 
