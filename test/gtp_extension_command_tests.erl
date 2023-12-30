@@ -11,7 +11,7 @@ roundtrip_test() ->
         gtp_bogus_engine, make_ref(), gtp_erlang_channel, ChannelB, []
     ),
 
-    ok = gtp_engine:register_command_module(Engine, gtp_echo_command),
+    ok = gtp_engine:register_extension_commands(Engine, #{<<"test-echo">> => gtp_echo_command}),
 
     {ok, Controller} = gtp_controller:start_link(gtp_erlang_channel, ChannelA, []),
 

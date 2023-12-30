@@ -10,7 +10,7 @@
 %% API
 -export([
     start_link/5,
-    register_command_module/2
+    register_extension_commands/2
 ]).
 
 %% gen_server callbacks
@@ -38,8 +38,8 @@ start_link(EngineMod, Engine, ChannelMod, Channel, Options) ->
             Other
     end.
 
-register_command_module(Server, ExtensionCommandModule) ->
-    gen_server:call(Server, {register_command_module, ExtensionCommandModule}).
+register_extension_commands(Server, ExtensionCommands) ->
+    gen_server:call(Server, {register_extension_commands, ExtensionCommands}).
 
 %%%
 %%% gen_server callbacks
@@ -55,10 +55,9 @@ init([EngineMod, Engine, ChannelMod, Channel]) ->
     },
     {ok, State}.
 
-handle_call({register_command_module, CommandMod}, _From, State) ->
+handle_call({register_extension_commands, NewCommands}, _From, State) ->
     #{extension_commands := ExtensionCommands} = State,
-    Name = CommandMod:command_name(),
-    NewState = State#{extension_commands := ExtensionCommands#{Name => CommandMod}},
+    NewState = State#{extension_commands := maps:merge(ExtensionCommands, NewCommands)},
     {reply, ok, NewState}.
 
 handle_cast(_Ignored, State) ->
