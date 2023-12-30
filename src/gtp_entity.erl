@@ -105,7 +105,7 @@ decode_move(Binary) ->
     {#move{color = Color, vertex = Vertex}, Rest}.
 
 decode_string(Binary) ->
-    [String | Rest] = binary:split(Binary, <<" ">>, [trim]),
+    [String | Rest] = binary:split(Binary, <<" ">>, []),
     {String, Rest}.
 
 decode_list(DecodeFun, Binary) ->

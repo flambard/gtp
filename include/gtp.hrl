@@ -19,7 +19,8 @@
     <<"known_command">> => gtp_command_known_command,
     <<"list_commands">> => gtp_command_list_commands,
     <<"quit">> => gtp_command_quit,
-    <<"time_left">> => gtp_command_time_left
+    <<"time_left">> => gtp_command_time_left,
+    <<"showboard">> => gtp_command_showboard
 }).
 
 -record(protocol_version, {}).
@@ -40,13 +41,16 @@
     stones = 0 :: non_neg_integer()
 }).
 
+-record(showboard, {}).
+
 -type command() ::
     #protocol_version{}
     | #name{}
     | #known_command{}
     | #list_commands{}
     | #quit{}
-    | #time_left{}.
+    | #time_left{}
+    | #showboard{}.
 
 %%%
 %%% Responses
