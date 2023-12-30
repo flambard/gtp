@@ -19,6 +19,7 @@
     <<"known_command">> => gtp_command_known_command,
     <<"list_commands">> => gtp_command_list_commands,
     <<"quit">> => gtp_command_quit,
+    <<"boardsize">> => gtp_command_boardsize,
     <<"time_left">> => gtp_command_time_left,
     <<"showboard">> => gtp_command_showboard
 }).
@@ -34,6 +35,10 @@
 -record(list_commands, {}).
 
 -record(quit, {}).
+
+-record(boardsize, {
+    size :: pos_integer()
+}).
 
 -record(time_left, {
     color :: color(),

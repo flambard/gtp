@@ -2,6 +2,10 @@
 -include_lib("eunit/include/eunit.hrl").
 -include_lib("gtp.hrl").
 
+%%
+%% These tests require that GnuGo is installed
+%%
+
 connect_and_quit_test() ->
     {ok, Channel} = gtp_port_channel:start_link(),
     ok = gtp_port_channel:open_port(Channel, {spawn, "gnugo --mode gtp"}, [binary, {line, 1024}]),
@@ -21,6 +25,13 @@ showboard_started_game_test() ->
     ok = gtp_port_channel:open_port(Channel, {spawn, "gnugo --mode gtp"}, [binary, {line, 1024}]),
 
     {ok, Controller} = gtp_controller:start_link(gtp_port_channel, Channel, []),
+
+    {ok, #success{values = #{}}} = gtp_controller:send_command(Controller, #boardsize{size = 9}),
+
+    %% clear_board
+    %% fixed_handicap 3 => vertex*
+    %% play move
+    %% genmove black => vertex
 
     {ok, #success{values = #{board := Board}}} =
         gtp_controller:send_command(Controller, #showboard{}),
