@@ -26,17 +26,22 @@ encode_optional_id(ID) -> gtp_entity:encode_int(ID).
 decode(_CommandMod, [<<"? ", Error/binary>>]) ->
     {undefined, #failure{error_message = Error}};
 decode(_CommandMod, [<<"?", IdAndError/binary>>]) ->
-    [BinID, Error] = binary:split(IdAndError, <<" ">>),
-    {ID, []} = gtp_entity:decode_int(BinID),
+    {ID, [Error]} = gtp_entity:decode_int(IdAndError),
     {ID, #failure{error_message = Error}};
+decode(_CommandMod, [<<"=">>]) ->
+    %% No response values to decode
+    {undefined, #success{values = #{}}};
+decode(_CommandMod, [<<"= ">>]) ->
+    %% No response values to decode
+    {undefined, #success{values = #{}}};
 decode(CommandMod, [<<"= ", ResponseValues/binary>> | Lines]) ->
-    Response = #success{values = CommandMod:decode_response_values([ResponseValues | Lines])},
-    {undefined, Response};
-decode(CommandMod, [<<"=">>]) ->
-    Response = #success{values = CommandMod:decode_response_values([<<>>])},
-    {undefined, Response};
+    Values = CommandMod:decode_response_values([ResponseValues | Lines]),
+    {undefined, #success{values = Values}};
 decode(CommandMod, [<<"=", IdAndResponseValues/binary>> | Lines]) ->
-    [BinID, ResponseValues] = binary:split(IdAndResponseValues, <<" ">>),
-    {ID, []} = gtp_entity:decode_int(BinID),
-    Response = #success{values = CommandMod:decode_response_values([ResponseValues | Lines])},
-    {ID, Response}.
+    {ID, [ResponseValues]} = gtp_entity:decode_int(IdAndResponseValues),
+    Values =
+        case [ResponseValues | Lines] of
+            [<<>>] -> #{};
+            NotEmpty -> CommandMod:decode_response_values(NotEmpty)
+        end,
+    {ID, #success{values = Values}}.
