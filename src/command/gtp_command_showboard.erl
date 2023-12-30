@@ -26,9 +26,9 @@ encode_command_arguments(#showboard{}) ->
 % encode_response_values(#{board := Board}) ->
 %     not_implemented.
 
-decode_response_values(Board) ->
-    Rows = gtp_entity:decode_multiline(
+decode_response_values(Lines) ->
+    Board = gtp_entity:decode_multiline(
         fun(Line) -> gtp_entity:decode_list(fun gtp_entity:decode_string/1, Line) end,
-        Board
+        Lines
     ),
-    #{board => Rows}.
+    #{board => Board}.

@@ -30,6 +30,6 @@ decode_command_arguments(Binary) ->
 encode_response_values(#{known := Known}) ->
     [gtp_entity:encode_boolean(Known)].
 
-decode_response_values([Known]) ->
-    {IsKnown, []} = gtp_entity:decode_boolean(Known),
-    #{known => IsKnown}.
+decode_response_values([Line]) ->
+    {Known, []} = gtp_entity:decode_boolean(Line),
+    #{known => Known}.

@@ -29,6 +29,6 @@ decode_command_arguments(<<>>) ->
 encode_response_values(#{name := Name}) ->
     [gtp_entity:encode_list(fun gtp_entity:encode_string/1, Name)].
 
-decode_response_values([Name]) ->
-    {NameStrings, []} = gtp_entity:decode_list(fun gtp_entity:decode_string/1, Name),
-    #{name => NameStrings}.
+decode_response_values([Line]) ->
+    {Name, []} = gtp_entity:decode_list(fun gtp_entity:decode_string/1, Line),
+    #{name => Name}.
