@@ -10,6 +10,8 @@
 %%% Encoding
 %%%
 
+encode(ID, #success{values = Values}, _CommandMod) when map_size(Values) == 0 ->
+    [<<"=">>, encode_optional_id(ID), <<"\n\n">>];
 encode(ID, #success{values = ResponseValues}, CommandMod) ->
     Values = [[<<" ">>, V] || V <- CommandMod:encode_response_values(ResponseValues)],
     [<<"=">>, encode_optional_id(ID), Values, <<"\n\n">>];

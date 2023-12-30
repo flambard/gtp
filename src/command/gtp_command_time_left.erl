@@ -6,8 +6,7 @@
 -export([
     command_name/0,
     encode_command_arguments/1,
-    decode_command_arguments/1,
-    encode_response_values/1
+    decode_command_arguments/1
 ]).
 
 command_name() ->
@@ -29,6 +28,3 @@ decode_command_arguments(Bin) ->
         time = Time,
         stones = Stones
     }.
-
-encode_response_values(#{}) ->
-    [].

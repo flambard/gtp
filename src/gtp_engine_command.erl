@@ -5,3 +5,7 @@
 
 -callback encode_response_values(ResponseValues :: response_values()) ->
     EncodedResponseValues :: [iodata()].
+
+-optional_callbacks([
+    encode_response_values/1
+]).
