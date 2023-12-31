@@ -25,22 +25,24 @@ encode_optional_id(ID) -> [integer_to_binary(ID), <<" ">>].
 %%%
 
 decode(Binary, ExtensionCommands) ->
-    {IdOrCommand, Rest} = split_binary_with_rest(Binary, <<" ">>),
-    case string:to_integer(binary_to_list(IdOrCommand)) of
-        {error, no_integer} ->
-            CommandMod = command_module(IdOrCommand, ExtensionCommands),
-            {undefined, CommandMod:decode_command_arguments(Rest), CommandMod};
-        {ID, []} ->
-            {Command, Args} = split_binary_with_rest(Rest, <<" ">>),
-            CommandMod = command_module(Command, ExtensionCommands),
-            {ID, CommandMod:decode_command_arguments(Args), CommandMod}
-    end.
+    {OptionalID, CommandName, Arguments} =
+        case gtp_entity:decode({alternative, int, string}, Binary) of
+            {ID, [CommandBin]} when is_integer(ID) ->
+                case gtp_entity:decode(string, CommandBin) of
+                    {Command, []} -> {ID, Command, <<>>};
+                    {Command, [Args]} -> {ID, Command, Args}
+                end;
+            {Command, []} ->
+                {undefined, Command, <<>>};
+            {Command, [Args]} ->
+                {undefined, Command, Args}
+        end,
+    CommandMod = command_module(CommandName, ExtensionCommands),
+    {OptionalID, CommandMod:decode_command_arguments(Arguments), CommandMod}.
 
-split_binary_with_rest(Bin, Pattern) ->
-    case binary:split(Bin, Pattern) of
-        [C] -> {C, <<>>};
-        [C, A] -> {C, A}
-    end.
+%%%
+%%% Private functions
+%%%
 
 command_module(Command) when is_tuple(Command) ->
     CommandName = atom_to_binary(element(1, Command)),
