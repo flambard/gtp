@@ -75,7 +75,7 @@ encode_multiline_list_of_strings_test() ->
 
 decode_multiline_string_test() ->
     [<<"Ein">>, <<"Zwei">>, <<"Drei">>] =
-        gtp_entity:decode({multiline, string}, [<<"Ein">>, <<"Zwei">>, <<"Drei">>]).
+        gtp_entity:decode_multiline(string, [<<"Ein">>, <<"Zwei">>, <<"Drei">>]).
 
 decode_multiline_list_of_strings_test() ->
     [
@@ -83,7 +83,7 @@ decode_multiline_list_of_strings_test() ->
         [<<"One">>, <<"Ring">>, <<"to">>, <<"find">>, <<"them">>],
         [<<"One">>, <<"Ring">>, <<"to">>, <<"bring">>, <<"them">>, <<"all">>],
         [<<"and">>, <<"in">>, <<"the">>, <<"darkness">>, <<"bind">>, <<"them">>]
-    ] = gtp_entity:decode({multiline, {list, string}}, [
+    ] = gtp_entity:decode_multiline({list, string}, [
         <<"One Ring to rule them all">>,
         <<"One Ring to find them">>,
         <<"One Ring to bring them all">>,

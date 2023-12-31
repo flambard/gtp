@@ -3,7 +3,8 @@
 
 -export([
     encode/2,
-    decode/2
+    decode/2,
+    decode_multiline/2
 ]).
 
 %%%
@@ -49,6 +50,8 @@ encode({multiline, Type}, List) ->
 %%% Decoding
 %%%
 
+-spec decode(singleline_entity_type(), binary()) -> {entity_value(), [binary()]}.
+
 decode(int, Binary) ->
     [IntBin | Rest] = binary:split(Binary, <<" ">>, [trim]),
     {binary_to_integer(IntBin), Rest};
@@ -85,8 +88,11 @@ decode({alternative, Type1, Type2}, Binary) ->
     end;
 decode({list, Type}, Binary) ->
     DecodedList = decode_list_of(Type, Binary),
-    {DecodedList, []};
-decode({multiline, Type}, Lines) ->
+    {DecodedList, []}.
+
+-spec decode_multiline(singleline_entity_type(), [binary()]) -> [entity_value()].
+
+decode_multiline(Type, Lines) ->
     lists:map(
         fun(Binary) ->
             {Value, []} = decode(Type, Binary),

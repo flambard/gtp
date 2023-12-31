@@ -21,10 +21,11 @@
 -type compound_entity_type() ::
     [simple_entity_type()]
     | {alternative, simple_entity_type(), simple_entity_type()}
-    | {list, simple_entity_type()}
-    | {multiline, simple_entity_type()}.
+    | {list, simple_entity_type()}.
 
--type entity_type() :: simple_entity_type() | compound_entity_type().
+-type singleline_entity_type() :: simple_entity_type() | compound_entity_type().
+
+-type entity_type() :: singleline_entity_type() | {multiline, singleline_entity_type()}.
 
 -type entity_value() ::
     non_neg_integer()

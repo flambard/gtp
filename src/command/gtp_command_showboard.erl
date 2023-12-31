@@ -27,5 +27,5 @@ encode_command_arguments(#showboard{}) ->
 %     not_implemented.
 
 decode_response_values(Lines) ->
-    Board = gtp_entity:decode({multiline, {list, string}}, Lines),
+    Board = gtp_entity:decode_multiline({list, string}, Lines),
     #{board => Board}.
