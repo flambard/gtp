@@ -79,7 +79,12 @@ decode(string, Binary) ->
     [String | Rest] = binary:split(Binary, <<" ">>, []),
     {String, Rest};
 decode(Types, Binary) when is_list(Types) ->
-    decode_collection(Types, [], Binary);
+    FoldingFun = fun(Type, {Decoded, [Bin]}) ->
+        {Value, Rest} = decode(Type, Bin),
+        {[Value | Decoded], Rest}
+    end,
+    {Values, Rest} = lists:foldl(FoldingFun, {[], [Binary]}, Types),
+    {lists:reverse(Values), Rest};
 decode({alternative, Type1, Type2}, Binary) ->
     try decode(Type1, Binary) of
         DecodedValue -> DecodedValue
@@ -104,13 +109,6 @@ decode_multiline(Type, Lines) ->
 %%%
 %%% Private functions
 %%%
-
-decode_collection([Type], Values, Binary) ->
-    {Value, Rest} = decode(Type, Binary),
-    {lists:reverse([Value | Values]), Rest};
-decode_collection([Type | Types], Values, Binary) ->
-    {Value, [Rest]} = decode(Type, Binary),
-    decode_collection(Types, [Value | Values], Rest).
 
 decode_list_of(Type, Binary) ->
     case decode(Type, Binary) of
