@@ -10,6 +10,8 @@
 %%% Encoding
 %%%
 
+-spec encode(entity_type(), entity_value()) -> iodata().
+
 encode(int, Int) ->
     integer_to_binary(Int);
 encode(float, Float) ->

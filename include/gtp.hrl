@@ -9,6 +9,34 @@
     vertex :: vertex()
 }).
 
+-type simple_entity_type() ::
+    int
+    | float
+    | boolean
+    | color
+    | vertex
+    | move
+    | string.
+
+-type compound_entity_type() ::
+    [simple_entity_type()]
+    | {alternative, simple_entity_type(), simple_entity_type()}
+    | {list, simple_entity_type()}
+    | {multiline, simple_entity_type()}.
+
+-type entity_type() :: simple_entity_type() | compound_entity_type().
+
+-type entity_value() ::
+    non_neg_integer()
+    | float()
+    | boolean()
+    | black
+    | white
+    | vertex()
+    | #move{}
+    | iodata()
+    | [entity_value()].
+
 %%%
 %%% Commands
 %%%
