@@ -27,8 +27,8 @@ decode_command_arguments(<<>>) ->
     #protocol_version{}.
 
 encode_response_values(#{version_number := Version}) ->
-    [gtp_entity:encode_int(Version)].
+    [gtp_entity:encode(int, Version)].
 
 decode_response_values([Line]) ->
-    {Version, []} = gtp_entity:decode_int(Line),
+    {Version, []} = gtp_entity:decode(int, Line),
     #{version_number => Version}.

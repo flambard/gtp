@@ -2,155 +2,110 @@
 -include("gtp.hrl").
 
 -export([
-    encode_int/1,
-    encode_float/1,
-    encode_boolean/1,
-    encode_color/1,
-    encode_vertex/1,
-    encode_move/1,
-    encode_string/1,
-    encode_list/2,
-    encode_alternative/3,
-    encode_multiline/2
-]).
-
--export([
-    decode_int/1,
-    decode_float/1,
-    decode_boolean/1,
-    decode_color/1,
-    decode_vertex/1,
-    decode_move/1,
-    decode_string/1,
-    decode_list/2,
-    decode_alternative/3,
-    decode_multiline/2
+    encode/2,
+    decode/2
 ]).
 
 %%%
 %%% Encoding
 %%%
 
--spec encode_int(Int :: non_neg_integer()) -> iodata().
-encode_int(Int) ->
-    integer_to_binary(Int).
-
--spec encode_float(Float :: float()) -> iodata().
-encode_float(Float) ->
-    float_to_binary(Float).
-
--spec encode_boolean(boolean()) -> iodata().
-encode_boolean(true) -> <<"true">>;
-encode_boolean(false) -> <<"false">>.
-
--spec encode_color(color()) -> iodata().
-encode_color(black) -> <<"black">>;
-encode_color(white) -> <<"white">>.
-
--spec encode_vertex(vertex()) -> iodata().
-encode_vertex({Letter, Number}) ->
+encode(int, Int) ->
+    integer_to_binary(Int);
+encode(float, Float) ->
+    float_to_binary(Float);
+encode(boolean, true) ->
+    <<"true">>;
+encode(boolean, false) ->
+    <<"false">>;
+encode(color, black) ->
+    <<"black">>;
+encode(color, white) ->
+    <<"white">>;
+encode(vertex, {Letter, Number}) ->
     [atom_to_binary(Letter), integer_to_binary(Number)];
-encode_vertex(pass) ->
-    <<"pass">>.
-
--spec encode_move(#move{}) -> iolist().
-encode_move(#move{color = C, vertex = V}) ->
-    [encode_color(C), " ", encode_vertex(V)].
-
--spec encode_string(String :: iodata()) -> iodata().
-encode_string(String) ->
-    String.
-
--spec encode_list(EncodeFun :: function(), list()) -> iodata().
-encode_list(EncodeFun, List) ->
-    lists:join(<<" ">>, lists:map(EncodeFun, List)).
-
--spec encode_alternative(EncodeFun1 :: function(), EncodeFun2 :: function(), term()) -> iodata().
-encode_alternative(EncodeFun1, EncodeFun2, Value) ->
-    try EncodeFun1(Value) of
+encode(vertex, pass) ->
+    <<"pass">>;
+encode(move, #move{color = C, vertex = V}) ->
+    encode([color, vertex], [C, V]);
+encode(string, String) ->
+    String;
+encode(Types, Values) when is_list(Types) ->
+    lists:join(<<" ">>, lists:zipwith(fun encode/2, Types, Values));
+encode({alternative, Type1, Type2}, Value) ->
+    try encode(Type1, Value) of
         EncodedValue -> EncodedValue
     catch
-        error:_Error -> EncodeFun2(Value)
-    end.
-
--spec encode_multiline(EncodeFun :: function(), list()) -> iodata().
-encode_multiline(EncodeFun, List) ->
-    lists:join(<<"\n">>, lists:map(EncodeFun, List)).
+        error:_Error -> encode(Type2, Value)
+    end;
+encode({list, Type}, List) ->
+    lists:join(<<" ">>, [encode(Type, E) || E <- List]);
+encode({multiline, Type}, List) ->
+    lists:join(<<"\n">>, [encode(Type, E) || E <- List]).
 
 %%%
 %%% Decoding
 %%%
 
--spec decode_int(binary()) -> {non_neg_integer(), [binary()]}.
-decode_int(Binary) ->
+decode(int, Binary) ->
     [IntBin | Rest] = binary:split(Binary, <<" ">>, [trim]),
-    {binary_to_integer(IntBin), Rest}.
-
--spec decode_float(binary()) -> {float(), [binary()]}.
-decode_float(Binary) ->
+    {binary_to_integer(IntBin), Rest};
+decode(float, Binary) ->
     [FloatBin | Rest] = binary:split(Binary, <<" ">>, [trim]),
-    {binary_to_float(FloatBin), Rest}.
-
--spec decode_boolean(binary()) -> {boolean(), [binary()]}.
-decode_boolean(Binary) ->
+    {binary_to_float(FloatBin), Rest};
+decode(boolean, Binary) ->
     case binary:split(Binary, <<" ">>, [trim]) of
         [<<"true">> | Rest] -> {true, Rest};
         [<<"false">> | Rest] -> {false, Rest}
-    end.
-
--spec decode_color(binary()) -> {color(), [binary()]}.
-decode_color(Bin) ->
-    case binary:split(Bin, <<" ">>, [trim]) of
+    end;
+decode(color, Binary) ->
+    case binary:split(Binary, <<" ">>, [trim]) of
         [<<"black">> | Rest] -> {black, Rest};
         [<<"white">> | Rest] -> {white, Rest}
-    end.
-
--spec decode_vertex(binary()) -> {vertex(), [binary()]}.
-decode_vertex(<<"pass", _/binary>> = Bin) ->
-    {<<"pass">>, Rest} = decode_string(Bin),
+    end;
+decode(vertex, <<"pass", _/binary>> = Bin) ->
+    {<<"pass">>, Rest} = decode(string, Bin),
     {pass, Rest};
-decode_vertex(<<Letter:1/binary, Number/binary>>) ->
+decode(vertex, <<Letter:1/binary, Number/binary>>) ->
     L = binary_to_atom(string:lowercase(Letter)),
-    {N, Rest} = decode_int(Number),
-    {{L, N}, Rest}.
-
--spec decode_move(binary()) -> {#move{}, [binary()]}.
-decode_move(Binary) ->
-    {Color, [R1]} = decode_color(Binary),
-    {Vertex, Rest} = decode_vertex(R1),
-    {#move{color = Color, vertex = Vertex}, Rest}.
-
--spec decode_string(binary()) -> {binary(), [binary()]}.
-decode_string(Binary) ->
+    {N, Rest} = decode(int, Number),
+    {{L, N}, Rest};
+decode(string, Binary) ->
     [String | Rest] = binary:split(Binary, <<" ">>, []),
-    {String, Rest}.
-
--spec decode_list(DecodeFun :: function(), binary()) -> {list(), [binary()]}.
-decode_list(DecodeFun, Binary) ->
-    DecodedList = decode_list_(DecodeFun, Binary),
-    {DecodedList, []}.
-
-decode_list_(DecodeFun, Binary) ->
-    case DecodeFun(Binary) of
-        {Value, []} -> [Value];
-        {Value, [Rest]} -> [Value | decode_list_(DecodeFun, Rest)]
-    end.
-
--spec decode_alternative(DecodeFun1 :: function(), DecodeFun2 :: function(), binary()) ->
-    {term(), [binary()]}.
-decode_alternative(DecodeFun1, DecodeFun2, Binary) ->
-    try DecodeFun1(Binary) of
+    {String, Rest};
+decode(Types, Binary) when is_list(Types) ->
+    decode_collection(Types, [], Binary);
+decode({alternative, Type1, Type2}, Binary) ->
+    try decode(Type1, Binary) of
         DecodedValue -> DecodedValue
     catch
-        error:_Error -> DecodeFun2(Binary)
-    end.
-
--spec decode_multiline(DecodeFun :: function(), [binary()]) -> [term()].
-decode_multiline(DecodeFun, Lines) ->
+        error:_Error -> decode(Type2, Binary)
+    end;
+decode({list, Type}, Binary) ->
+    DecodedList = decode_list_of(Type, Binary),
+    {DecodedList, []};
+decode({multiline, Type}, Lines) ->
     lists:map(
         fun(Binary) ->
-            {Value, []} = DecodeFun(Binary),
+            {Value, []} = decode(Type, Binary),
             Value
         end,
         Lines
     ).
+
+%%%
+%%% Private functions
+%%%
+
+decode_collection([Type], Values, Binary) ->
+    {Value, Rest} = decode(Type, Binary),
+    {lists:reverse([Value | Values]), Rest};
+decode_collection([Type | Types], Values, Binary) ->
+    {Value, [Rest]} = decode(Type, Binary),
+    decode_collection(Types, [Value | Values], Rest).
+
+decode_list_of(Type, Binary) ->
+    case decode(Type, Binary) of
+        {Value, []} -> [Value];
+        {Value, [Rest]} -> [Value | decode_list_of(Type, Rest)]
+    end.

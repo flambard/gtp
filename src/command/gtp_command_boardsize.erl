@@ -10,4 +10,4 @@
 command_name() -> <<"boardsize">>.
 
 encode_command_arguments(#boardsize{size = Size}) ->
-    [gtp_entity:encode_int(Size)].
+    [gtp_entity:encode(int, Size)].

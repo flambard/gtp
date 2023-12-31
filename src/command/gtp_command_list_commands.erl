@@ -27,8 +27,8 @@ decode_command_arguments(<<>>) ->
     #list_commands{}.
 
 encode_response_values(#{commands := Commands}) ->
-    [gtp_entity:encode_multiline(fun gtp_entity:encode_string/1, Commands)].
+    [gtp_entity:encode({multiline, string}, Commands)].
 
 decode_response_values(Lines) ->
-    Commands = gtp_entity:decode_multiline(fun gtp_entity:decode_string/1, Lines),
+    Commands = gtp_entity:decode({multiline, string}, Lines),
     #{commands => Commands}.

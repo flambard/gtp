@@ -25,15 +25,15 @@ command_name() ->
     <<"test-echo">>.
 
 encode_command_arguments(#echo{value = Value}) ->
-    [gtp_entity:encode_string(Value)].
+    [gtp_entity:encode(string, Value)].
 
 decode_command_arguments(Binary) ->
-    {Value, []} = gtp_entity:decode_string(Binary),
+    {Value, []} = gtp_entity:decode(string, Binary),
     #echo{value = Value}.
 
 encode_response_values(#{value := Value}) ->
-    [gtp_entity:encode_string(Value)].
+    [gtp_entity:encode(string, Value)].
 
 decode_response_values([BinValue]) ->
-    {Value, []} = gtp_entity:decode_string(BinValue),
+    {Value, []} = gtp_entity:decode(string, BinValue),
     #{value => Value}.

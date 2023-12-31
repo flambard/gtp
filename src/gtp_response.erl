@@ -19,7 +19,7 @@ encode(ID, #failure{error_message = Error}, _CommandMod) ->
     [<<"?">>, encode_optional_id(ID), <<" ">>, Error, <<"\n\n">>].
 
 encode_optional_id(undefined) -> <<>>;
-encode_optional_id(ID) -> gtp_entity:encode_int(ID).
+encode_optional_id(ID) -> gtp_entity:encode(int, ID).
 
 %%%
 %%% Decoding
@@ -28,7 +28,7 @@ encode_optional_id(ID) -> gtp_entity:encode_int(ID).
 decode(_CommandMod, [<<"? ", Error/binary>>]) ->
     {undefined, #failure{error_message = Error}};
 decode(_CommandMod, [<<"?", IdAndError/binary>>]) ->
-    {ID, [Error]} = gtp_entity:decode_int(IdAndError),
+    {ID, [Error]} = gtp_entity:decode(int, IdAndError),
     {ID, #failure{error_message = Error}};
 decode(_CommandMod, [<<"=">>]) ->
     %% No response values to decode
@@ -40,7 +40,7 @@ decode(CommandMod, [<<"= ", ResponseValues/binary>> | Lines]) ->
     Values = CommandMod:decode_response_values([ResponseValues | Lines]),
     {undefined, #success{values = Values}};
 decode(CommandMod, [<<"=", IdAndResponseValues/binary>> | Lines]) ->
-    {ID, [ResponseValues]} = gtp_entity:decode_int(IdAndResponseValues),
+    {ID, [ResponseValues]} = gtp_entity:decode(int, IdAndResponseValues),
     Values =
         case [ResponseValues | Lines] of
             [<<>>] -> #{};

@@ -10,4 +10,4 @@
 command_name() -> <<"play">>.
 
 encode_command_arguments(#play{move = Move}) ->
-    [gtp_entity:encode_move(Move)].
+    [gtp_entity:encode(move, Move)].
