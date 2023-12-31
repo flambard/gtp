@@ -24,12 +24,10 @@ encode_command_arguments(#known_command{command_name = Name}) ->
     [gtp_entity:encode(string, Name)].
 
 decode_command_arguments(Binary) ->
-    {Name, []} = gtp_entity:decode(string, Binary),
-    #known_command{command_name = Name}.
+    #known_command{command_name = gtp_entity:decode_line(string, Binary)}.
 
 encode_response_values(#{known := Known}) ->
     [gtp_entity:encode(boolean, Known)].
 
 decode_response_values([Line]) ->
-    {Known, []} = gtp_entity:decode(boolean, Line),
-    #{known => Known}.
+    #{known => gtp_entity:decode_line(boolean, Line)}.

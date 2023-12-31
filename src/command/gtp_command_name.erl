@@ -30,5 +30,4 @@ encode_response_values(#{name := Name}) ->
     [gtp_entity:encode({list, string}, Name)].
 
 decode_response_values([Line]) ->
-    {Name, []} = gtp_entity:decode({list, string}, Line),
-    #{name => Name}.
+    #{name => gtp_entity:decode_line({list, string}, Line)}.

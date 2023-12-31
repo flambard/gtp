@@ -14,5 +14,4 @@ encode_command_arguments(#genmove{color = Color}) ->
     [gtp_entity:encode(color, Color)].
 
 decode_response_values([Line]) ->
-    {Vertex, []} = gtp_entity:decode(vertex, Line),
-    #{vertex => Vertex}.
+    #{vertex => gtp_entity:decode_line(vertex, Line)}.

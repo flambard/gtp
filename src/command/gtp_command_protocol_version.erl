@@ -30,5 +30,4 @@ encode_response_values(#{version_number := Version}) ->
     [gtp_entity:encode(int, Version)].
 
 decode_response_values([Line]) ->
-    {Version, []} = gtp_entity:decode(int, Line),
-    #{version_number => Version}.
+    #{version_number => gtp_entity:decode_line(int, Line)}.

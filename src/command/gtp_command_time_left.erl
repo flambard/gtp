@@ -16,7 +16,7 @@ encode_command_arguments(#time_left{color = Color, time = Time, stones = Stones}
     [gtp_entity:encode([color, int, int], [Color, Time, Stones])].
 
 decode_command_arguments(Binary) ->
-    {[Color, Time, Stones], []} = gtp_entity:decode([color, int, int], Binary),
+    [Color, Time, Stones] = gtp_entity:decode_line([color, int, int], Binary),
     #time_left{
         color = Color,
         time = Time,

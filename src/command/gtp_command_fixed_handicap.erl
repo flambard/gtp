@@ -14,5 +14,4 @@ encode_command_arguments(#fixed_handicap{number_of_stones = Stones}) ->
     [gtp_entity:encode(int, Stones)].
 
 decode_response_values([Line]) ->
-    {Vertices, []} = gtp_entity:decode({list, vertex}, Line),
-    #{vertices => Vertices}.
+    #{vertices => gtp_entity:decode_line({list, vertex}, Line)}.

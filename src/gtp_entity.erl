@@ -4,6 +4,7 @@
 -export([
     encode/2,
     decode/2,
+    decode_line/2,
     decode_multiline/2
 ]).
 
@@ -95,16 +96,16 @@ decode({list, Type}, Binary) ->
     DecodedList = decode_list_of(Type, Binary),
     {DecodedList, []}.
 
+-spec decode_line(singleline_entity_type(), binary()) -> entity_value().
+
+decode_line(Type, Binary) ->
+    {Value, []} = decode(Type, Binary),
+    Value.
+
 -spec decode_multiline(singleline_entity_type(), [binary()]) -> [entity_value()].
 
 decode_multiline(Type, Lines) ->
-    lists:map(
-        fun(Binary) ->
-            {Value, []} = decode(Type, Binary),
-            Value
-        end,
-        Lines
-    ).
+    lists:map(fun(Binary) -> decode_line(Type, Binary) end, Lines).
 
 %%%
 %%% Private functions
