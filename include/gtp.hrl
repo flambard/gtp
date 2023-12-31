@@ -30,8 +30,7 @@
     non_neg_integer()
     | float()
     | boolean()
-    | black
-    | white
+    | color()
     | vertex()
     | #move{}
     | iodata()
