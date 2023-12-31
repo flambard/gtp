@@ -19,9 +19,9 @@
     | string.
 
 -type compound_entity_type() ::
-    [simple_entity_type()]
-    | {alternative, simple_entity_type(), simple_entity_type()}
-    | {list, simple_entity_type()}.
+    [singleline_entity_type()]
+    | {alternative, singleline_entity_type(), singleline_entity_type()}
+    | {list, singleline_entity_type()}.
 
 -type singleline_entity_type() :: simple_entity_type() | compound_entity_type().
 

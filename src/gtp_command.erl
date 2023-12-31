@@ -26,12 +26,9 @@ encode_optional_id(ID) -> [integer_to_binary(ID), <<" ">>].
 
 decode(Binary, ExtensionCommands) ->
     {OptionalID, CommandName, Arguments} =
-        case gtp_entity:decode({alternative, int, string}, Binary) of
-            {ID, [CommandBin]} when is_integer(ID) ->
-                {Command, ArgsBin} = gtp_entity:decode(string, CommandBin),
-                {ID, Command, iolist_to_binary(ArgsBin)};
-            {Command, ArgsBin} ->
-                {undefined, Command, iolist_to_binary(ArgsBin)}
+        case gtp_entity:decode({alternative, [int, string], string}, Binary) of
+            {[ID, Command], ArgsBin} -> {ID, Command, iolist_to_binary(ArgsBin)};
+            {Command, ArgsBin} -> {undefined, Command, iolist_to_binary(ArgsBin)}
         end,
     CommandMod = command_module(CommandName, ExtensionCommands),
     {OptionalID, CommandMod:decode_command_arguments(Arguments), CommandMod}.
