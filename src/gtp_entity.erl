@@ -33,7 +33,7 @@ encode(move, #move{color = C, vertex = V}) ->
 encode(string, String) ->
     String;
 encode(Types, Values) when is_list(Types) ->
-    lists:join(<<" ">>, lists:zipwith(fun encode/2, Types, Values));
+    [lists:join(<<" ">>, lists:zipwith(fun encode/2, Types, Values))];
 encode({alternative, Type1, Type2}, Value) ->
     try encode(Type1, Value) of
         EncodedValue -> EncodedValue
