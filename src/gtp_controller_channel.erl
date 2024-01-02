@@ -1,4 +1,4 @@
--module(gtp_controller).
+-module(gtp_controller_channel).
 -behaviour(gen_server).
 -include("gtp.hrl").
 
