@@ -4,8 +4,7 @@
 
 roundtrip_test() ->
     {ok, ChannelA} = gtp_erlang_channel:start_link(),
-    {ok, ChannelB} = gtp_erlang_channel:start_link(),
-    ok = gtp_erlang_channel:connect(ChannelA, ChannelB),
+    {ok, ChannelB} = gtp_erlang_channel:start_link(ChannelA),
 
     {ok, _Engine} = gtp_engine:start_link(
         gtp_bogus_engine, make_ref(), gtp_erlang_channel, ChannelB, []
@@ -18,8 +17,7 @@ roundtrip_test() ->
 
 shutdown_test() ->
     {ok, ChannelA} = gtp_erlang_channel:start_link(),
-    {ok, ChannelB} = gtp_erlang_channel:start_link(),
-    ok = gtp_erlang_channel:connect(ChannelA, ChannelB),
+    {ok, ChannelB} = gtp_erlang_channel:start_link(ChannelA),
 
     {ok, Engine} = gtp_engine:start_link(
         gtp_bogus_engine, make_ref(), gtp_erlang_channel, ChannelB, []
@@ -36,8 +34,7 @@ shutdown_test() ->
 
 command_with_single_argument_test() ->
     {ok, ChannelA} = gtp_erlang_channel:start_link(),
-    {ok, ChannelB} = gtp_erlang_channel:start_link(),
-    ok = gtp_erlang_channel:connect(ChannelA, ChannelB),
+    {ok, ChannelB} = gtp_erlang_channel:start_link(ChannelA),
 
     {ok, _Engine} = gtp_engine:start_link(
         gtp_bogus_engine, make_ref(), gtp_erlang_channel, ChannelB, []
@@ -50,8 +47,7 @@ command_with_single_argument_test() ->
 
 command_with_multiple_arguments_test() ->
     {ok, ChannelA} = gtp_erlang_channel:start_link(),
-    {ok, ChannelB} = gtp_erlang_channel:start_link(),
-    ok = gtp_erlang_channel:connect(ChannelA, ChannelB),
+    {ok, ChannelB} = gtp_erlang_channel:start_link(ChannelA),
 
     {ok, _Engine} = gtp_engine:start_link(
         gtp_bogus_engine, make_ref(), gtp_erlang_channel, ChannelB, []
@@ -68,8 +64,7 @@ command_with_multiple_arguments_test() ->
 
 command_with_multiple_strings_response_test() ->
     {ok, ChannelA} = gtp_erlang_channel:start_link(),
-    {ok, ChannelB} = gtp_erlang_channel:start_link(),
-    ok = gtp_erlang_channel:connect(ChannelA, ChannelB),
+    {ok, ChannelB} = gtp_erlang_channel:start_link(ChannelA),
 
     {ok, _Engine} = gtp_engine:start_link(
         gtp_bogus_engine, make_ref(), gtp_erlang_channel, ChannelB, []
@@ -82,8 +77,7 @@ command_with_multiple_strings_response_test() ->
 
 command_with_multiline_response_test() ->
     {ok, ChannelA} = gtp_erlang_channel:start_link(),
-    {ok, ChannelB} = gtp_erlang_channel:start_link(),
-    ok = gtp_erlang_channel:connect(ChannelA, ChannelB),
+    {ok, ChannelB} = gtp_erlang_channel:start_link(ChannelA),
 
     {ok, _Engine} = gtp_engine:start_link(
         gtp_bogus_engine, make_ref(), gtp_erlang_channel, ChannelB, []

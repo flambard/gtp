@@ -5,7 +5,7 @@
 %% API
 -export([
     start_link/0,
-    connect/2
+    start_link/1
 ]).
 
 %% gtp_channel callbacks
@@ -30,8 +30,8 @@
 start_link() ->
     gen_server:start_link(?MODULE, [], []).
 
-connect(Channel, Peer) ->
-    gen_server:call(Channel, {connect, Peer}).
+start_link(Peer) ->
+    gen_server:start_link(?MODULE, [Peer], []).
 
 %%%
 %%% gtp_channel callbacks
@@ -55,11 +55,15 @@ init([]) ->
         peer => undefined,
         controlling_process => undefined
     },
+    {ok, State};
+init([Peer]) ->
+    Peer ! {connect, self()},
+    State = #{
+        peer => Peer,
+        controlling_process => undefined
+    },
     {ok, State}.
 
-handle_call({connect, Peer}, _From, State) ->
-    Peer ! {connect, self()},
-    {reply, ok, State#{peer := Peer}};
 handle_call({controlling_process, Pid}, _From, State) ->
     {reply, ok, State#{controlling_process := Pid}};
 handle_call({send_message, Message}, _From, State) ->
