@@ -1,4 +1,4 @@
--module(gtp_channel).
+-module(gtp_channel_transport).
 
 -type channel() :: term().
 

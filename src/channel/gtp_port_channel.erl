@@ -1,5 +1,5 @@
 -module(gtp_port_channel).
--behaviour(gtp_channel).
+-behaviour(gtp_channel_transport).
 -behaviour(gen_server).
 
 %% API
@@ -79,5 +79,5 @@ handle_info({Port, {data, {eol, Line}}}, State) ->
         port := Port,
         controlling_process := Pid
     } = State,
-    ok = gtp_channel:recv_message(Pid, Line),
+    ok = gtp_channel_transport:recv_message(Pid, Line),
     {noreply, State}.

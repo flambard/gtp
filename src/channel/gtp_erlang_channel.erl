@@ -1,5 +1,5 @@
 -module(gtp_erlang_channel).
--behaviour(gtp_channel).
+-behaviour(gtp_channel_transport).
 -behaviour(gen_server).
 
 %% API
@@ -83,9 +83,9 @@ handle_info({transport, Message}, State) ->
 
 recv_message_lines(Pid, Message) ->
     [Line, Rest] = binary:split(Message, <<"\n">>),
-    ok = gtp_channel:recv_message(Pid, Line),
+    ok = gtp_channel_transport:recv_message(Pid, Line),
     case Rest of
         <<>> -> ok;
-        <<"\n">> -> gtp_channel:recv_message(Pid, <<>>);
+        <<"\n">> -> gtp_channel_transport:recv_message(Pid, <<>>);
         MoreData -> recv_message_lines(Pid, MoreData)
     end.
