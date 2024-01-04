@@ -1,13 +1,13 @@
 -module(gtp_channel_transport).
 
--type channel() :: term().
+-type connection() :: term().
 
--callback controlling_process(channel(), pid()) -> ok | {error, Reason :: term()}.
+-callback controlling_process(connection(), pid()) -> ok | {error, Reason :: term()}.
 
--callback send_message(channel(), Message :: iodata()) ->
+-callback send_message(connection(), Message :: iodata()) ->
     ok | {error, Reason :: term()}.
 
--callback stop(channel()) -> ok.
+-callback stop(connection()) -> ok.
 
 %% API
 -export([recv_message/2]).

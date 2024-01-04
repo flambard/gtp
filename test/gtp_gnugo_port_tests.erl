@@ -7,24 +7,24 @@
 %%
 
 connect_and_quit_test() ->
-    {ok, Channel} = gtp_port_channel:start_link(),
-    ok = gtp_port_channel:open_port(Channel, {spawn, "gnugo --mode gtp"}),
+    {ok, Connection} = gtp_port_transport:start_link(),
+    ok = gtp_port_transport:open_port(Connection, {spawn, "gnugo --mode gtp"}),
 
-    {ok, Controller} = gtp_controller_channel:start_link(gtp_port_channel, Channel, []),
+    {ok, Controller} = gtp_controller_channel:start_link(gtp_port_transport, Connection, []),
 
     {ok, #success{values = #{version_number := 2}}} =
         gtp_controller_channel:send_command(Controller, #protocol_version{}),
 
     {ok, #success{}} = gtp_controller_channel:send_command(Controller, #quit{}),
 
-    false = is_process_alive(Channel),
+    false = is_process_alive(Connection),
     false = is_process_alive(Controller).
 
 showboard_started_game_test() ->
-    {ok, Channel} = gtp_port_channel:start_link(),
-    ok = gtp_port_channel:open_port(Channel, {spawn, "gnugo --mode gtp"}),
+    {ok, Connection} = gtp_port_transport:start_link(),
+    ok = gtp_port_transport:open_port(Connection, {spawn, "gnugo --mode gtp"}),
 
-    {ok, Controller} = gtp_controller_channel:start_link(gtp_port_channel, Channel, []),
+    {ok, Controller} = gtp_controller_channel:start_link(gtp_port_transport, Connection, []),
 
     {ok, #success{}} = gtp_controller_channel:send_command(Controller, #boardsize{size = 9}),
     {ok, #success{}} = gtp_controller_channel:send_command(Controller, #clear_board{}),

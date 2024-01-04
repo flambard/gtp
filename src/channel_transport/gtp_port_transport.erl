@@ -1,4 +1,4 @@
--module(gtp_port_channel).
+-module(gtp_port_transport).
 -behaviour(gtp_channel_transport).
 -behaviour(gen_server).
 
@@ -9,7 +9,7 @@
     open_port/3
 ]).
 
-%% gtp_channel callbacks
+%% gtp_channel_transport callbacks
 -export([
     controlling_process/2,
     send_message/2,
@@ -31,24 +31,24 @@
 start_link() ->
     gen_server:start_link(?MODULE, [], []).
 
-open_port(Channel, PortName) ->
-    open_port(Channel, PortName, []).
+open_port(Server, PortName) ->
+    open_port(Server, PortName, []).
 
-open_port(Channel, PortName, PortSettings) ->
-    gen_server:call(Channel, {open_port, PortName, PortSettings}).
+open_port(Server, PortName, PortSettings) ->
+    gen_server:call(Server, {open_port, PortName, PortSettings}).
 
 %%%
-%%% gtp_channel callbacks
+%%% gtp_channel_transport callbacks
 %%%
 
-controlling_process(Channel, Pid) ->
-    gen_server:call(Channel, {controlling_process, Pid}).
+controlling_process(Server, Pid) ->
+    gen_server:call(Server, {controlling_process, Pid}).
 
-send_message(Channel, Message) ->
-    gen_server:call(Channel, {send_message, Message}).
+send_message(Server, Message) ->
+    gen_server:call(Server, {send_message, Message}).
 
-stop(Channel) ->
-    gen_server:stop(Channel).
+stop(Server) ->
+    gen_server:stop(Server).
 
 %%%
 %%% gen_server callbacks
