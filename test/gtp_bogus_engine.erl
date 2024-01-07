@@ -13,6 +13,8 @@ handle_command(#protocol_version{}) ->
     {ok, #{version_number => 2}};
 handle_command(#name{}) ->
     {ok, #{name => ["Bogus", "Engine"]}};
+handle_command(#version{}) ->
+    {ok, #{version => ["0.0.0"]}};
 handle_command(#known_command{command_name = Name}) ->
     {ok, #{known => is_known_command(Name)}};
 handle_command(#list_commands{}) ->

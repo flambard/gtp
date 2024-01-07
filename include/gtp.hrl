@@ -45,6 +45,8 @@
 
 -record(name, {}).
 
+-record(version, {}).
+
 -record(known_command, {
     command_name :: binary()
 }).
@@ -82,6 +84,7 @@
 -type command() ::
     #protocol_version{}
     | #name{}
+    | #version{}
     | #known_command{}
     | #list_commands{}
     | #quit{}
@@ -96,6 +99,7 @@
 -define(COMMAND_MODULES, #{
     <<"protocol_version">> => gtp_command_protocol_version,
     <<"name">> => gtp_command_name,
+    <<"version">> => gtp_command_version,
     <<"known_command">> => gtp_command_known_command,
     <<"list_commands">> => gtp_command_list_commands,
     <<"quit">> => gtp_command_quit,

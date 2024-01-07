@@ -85,7 +85,10 @@ command_with_multiple_strings_response_test() ->
     ),
 
     {ok, #success{values = #{name := [<<"Bogus">>, <<"Engine">>]}}} =
-        gtp_controller_channel:send_command(ControllerChannel, #name{}).
+        gtp_controller_channel:send_command(ControllerChannel, #name{}),
+
+    {ok, #success{values = #{version := [<<"0.0.0">>]}}} =
+        gtp_controller_channel:send_command(ControllerChannel, #version{}).
 
 command_with_multiline_response_test() ->
     {ok, ConnectionA} = gtp_erlang_transport:start_link(),
