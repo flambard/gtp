@@ -76,6 +76,9 @@ decode(vertex, <<Letter:1/binary, Number/binary>>) ->
     L = binary_to_atom(string:lowercase(Letter)),
     {N, Rest} = decode(int, Number),
     {{L, N}, Rest};
+decode(move, Binary) ->
+    {[C, V], Rest} = decode([color, vertex], Binary),
+    {#move{color = C, vertex = V}, Rest};
 decode(string, Binary) ->
     [String | Rest] = binary:split(Binary, <<" ">>, []),
     {String, Rest};
