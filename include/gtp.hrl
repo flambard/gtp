@@ -61,6 +61,10 @@
 
 -record(clear_board, {}).
 
+-record(komi, {
+    new_komi :: float()
+}).
+
 -record(fixed_handicap, {
     number_of_stones :: non_neg_integer()
 }).
@@ -90,6 +94,7 @@
     | #quit{}
     | #boardsize{}
     | #clear_board{}
+    | #komi{}
     | #fixed_handicap{}
     | #play{}
     | #genmove{}
@@ -105,6 +110,7 @@
     <<"quit">> => gtp_command_quit,
     <<"boardsize">> => gtp_command_boardsize,
     <<"clear_board">> => gtp_command_clear_board,
+    <<"komi">> => gtp_command_komi,
     <<"fixed_handicap">> => gtp_command_fixed_handicap,
     <<"play">> => gtp_command_play,
     <<"genmove">> => gtp_command_genmove,

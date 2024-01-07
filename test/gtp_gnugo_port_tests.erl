@@ -26,6 +26,7 @@ showboard_started_game_test() ->
 
     {ok, ControllerChannel} = gtp_controller_channel:start_link(gtp_port_transport, Connection, []),
 
+    {ok, #success{}} = gtp_controller_channel:send_command(ControllerChannel, #komi{new_komi = 6.5}),
     {ok, #success{}} = gtp_controller_channel:send_command(ControllerChannel, #boardsize{size = 9}),
     {ok, #success{}} = gtp_controller_channel:send_command(ControllerChannel, #clear_board{}),
 

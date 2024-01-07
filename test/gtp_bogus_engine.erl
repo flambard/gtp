@@ -21,6 +21,8 @@ handle_command(#list_commands{}) ->
     {ok, #{commands => command_list()}};
 handle_command(#quit{}) ->
     {ok, #{}};
+handle_command(#komi{new_komi = _Komi}) ->
+    {ok, #{}};
 handle_command({echo, Value}) ->
     {ok, #{value => Value}};
 handle_command(_Unknown) ->
