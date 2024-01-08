@@ -85,6 +85,8 @@
     color :: color()
 }).
 
+-record(undo, {}).
+
 -record(time_left, {
     color :: color(),
     time :: non_neg_integer(),
@@ -108,6 +110,7 @@
     | #set_free_handicap{}
     | #play{}
     | #genmove{}
+    | #undo{}
     | #time_left{}
     | #showboard{}.
 
@@ -126,6 +129,7 @@
     <<"set_free_handicap">> => gtp_command_set_free_handicap,
     <<"play">> => gtp_command_play,
     <<"genmove">> => gtp_command_genmove,
+    <<"undo">> => gtp_command_undo,
     <<"time_left">> => gtp_command_time_left,
     <<"showboard">> => gtp_command_showboard
 }).
