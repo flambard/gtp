@@ -110,6 +110,10 @@
     move_number :: non_neg_integer() | undefined
 }).
 
+-record(reg_genmove, {
+    color :: color()
+}).
+
 -record(showboard, {}).
 
 -type command() ::
@@ -133,6 +137,7 @@
     | #final_score{}
     | #final_status_list{}
     | #loadsgf{}
+    | #reg_genmove{}
     | #showboard{}.
 
 -define(COMMAND_MODULES, #{
@@ -156,6 +161,7 @@
     <<"final_score">> => gtp_command_final_score,
     <<"final_status_list">> => gtp_command_final_status_list,
     <<"loadsgf">> => gtp_command_loadsgf,
+    <<"reg_genmove">> => gtp_command_reg_genmove,
     <<"showboard">> => gtp_command_showboard
 }).
 

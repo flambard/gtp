@@ -1,4 +1,4 @@
--module(gtp_command_genmove).
+-module(gtp_command_reg_genmove).
 -behaviour(gtp_controller_command).
 -behaviour(gtp_engine_command).
 -include("gtp.hrl").
@@ -11,13 +11,13 @@
     decode_response_values/1
 ]).
 
-command_name() -> <<"genmove">>.
+command_name() -> <<"reg_genmove">>.
 
-encode_command_arguments(#genmove{color = Color}) ->
+encode_command_arguments(#reg_genmove{color = Color}) ->
     [gtp_entity:encode(color, Color)].
 
 decode_command_arguments(Binary) ->
-    #genmove{color = gtp_entity:decode_line(color, Binary)}.
+    #reg_genmove{color = gtp_entity:decode_line(color, Binary)}.
 
 encode_response_values(#{vertex := Vertex}) ->
     [gtp_entity:encode({alternative, vertex, string}, Vertex)].
