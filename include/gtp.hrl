@@ -101,6 +101,10 @@
 
 -record(final_score, {}).
 
+-record(final_status_list, {
+    status :: iodata()
+}).
+
 -record(showboard, {}).
 
 -type command() ::
@@ -122,6 +126,7 @@
     | #time_settings{}
     | #time_left{}
     | #final_score{}
+    | #final_status_list{}
     | #showboard{}.
 
 -define(COMMAND_MODULES, #{
@@ -143,6 +148,7 @@
     <<"time_settings">> => gtp_command_time_settings,
     <<"time_left">> => gtp_command_time_left,
     <<"final_score">> => gtp_command_final_score,
+    <<"final_status_list">> => gtp_command_final_status_list,
     <<"showboard">> => gtp_command_showboard
 }).
 
