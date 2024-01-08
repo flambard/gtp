@@ -99,6 +99,8 @@
     stones = 0 :: non_neg_integer()
 }).
 
+-record(final_score, {}).
+
 -record(showboard, {}).
 
 -type command() ::
@@ -119,6 +121,7 @@
     | #undo{}
     | #time_settings{}
     | #time_left{}
+    | #final_score{}
     | #showboard{}.
 
 -define(COMMAND_MODULES, #{
@@ -139,6 +142,7 @@
     <<"undo">> => gtp_command_undo,
     <<"time_settings">> => gtp_command_time_settings,
     <<"time_left">> => gtp_command_time_left,
+    <<"final_score">> => gtp_command_final_score,
     <<"showboard">> => gtp_command_showboard
 }).
 
