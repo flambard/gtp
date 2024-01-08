@@ -105,6 +105,11 @@
     status :: iodata()
 }).
 
+-record(loadsgf, {
+    filename :: iodata(),
+    move_number :: non_neg_integer() | undefined
+}).
+
 -record(showboard, {}).
 
 -type command() ::
@@ -127,6 +132,7 @@
     | #time_left{}
     | #final_score{}
     | #final_status_list{}
+    | #loadsgf{}
     | #showboard{}.
 
 -define(COMMAND_MODULES, #{
@@ -149,6 +155,7 @@
     <<"time_left">> => gtp_command_time_left,
     <<"final_score">> => gtp_command_final_score,
     <<"final_status_list">> => gtp_command_final_status_list,
+    <<"loadsgf">> => gtp_command_loadsgf,
     <<"showboard">> => gtp_command_showboard
 }).
 
