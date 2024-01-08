@@ -69,6 +69,10 @@
     number_of_stones :: non_neg_integer()
 }).
 
+-record(place_free_handicap, {
+    number_of_stones :: non_neg_integer()
+}).
+
 -record(play, {
     move :: #move{}
 }).
@@ -96,6 +100,7 @@
     | #clear_board{}
     | #komi{}
     | #fixed_handicap{}
+    | #place_free_handicap{}
     | #play{}
     | #genmove{}
     | #time_left{}
@@ -112,6 +117,7 @@
     <<"clear_board">> => gtp_command_clear_board,
     <<"komi">> => gtp_command_komi,
     <<"fixed_handicap">> => gtp_command_fixed_handicap,
+    <<"place_free_handicap">> => gtp_command_place_free_handicap,
     <<"play">> => gtp_command_play,
     <<"genmove">> => gtp_command_genmove,
     <<"time_left">> => gtp_command_time_left,
