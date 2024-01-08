@@ -87,6 +87,12 @@
 
 -record(undo, {}).
 
+-record(time_settings, {
+    main_time :: non_neg_integer(),
+    byo_yomi_time :: non_neg_integer(),
+    byo_yomi_stones = 0 :: non_neg_integer()
+}).
+
 -record(time_left, {
     color :: color(),
     time :: non_neg_integer(),
@@ -111,6 +117,7 @@
     | #play{}
     | #genmove{}
     | #undo{}
+    | #time_settings{}
     | #time_left{}
     | #showboard{}.
 
@@ -130,6 +137,7 @@
     <<"play">> => gtp_command_play,
     <<"genmove">> => gtp_command_genmove,
     <<"undo">> => gtp_command_undo,
+    <<"time_settings">> => gtp_command_time_settings,
     <<"time_left">> => gtp_command_time_left,
     <<"showboard">> => gtp_command_showboard
 }).
