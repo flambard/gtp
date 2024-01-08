@@ -73,6 +73,10 @@
     number_of_stones :: non_neg_integer()
 }).
 
+-record(set_free_handicap, {
+    vertices :: [vertex()]
+}).
+
 -record(play, {
     move :: #move{}
 }).
@@ -101,6 +105,7 @@
     | #komi{}
     | #fixed_handicap{}
     | #place_free_handicap{}
+    | #set_free_handicap{}
     | #play{}
     | #genmove{}
     | #time_left{}
@@ -118,6 +123,7 @@
     <<"komi">> => gtp_command_komi,
     <<"fixed_handicap">> => gtp_command_fixed_handicap,
     <<"place_free_handicap">> => gtp_command_place_free_handicap,
+    <<"set_free_handicap">> => gtp_command_set_free_handicap,
     <<"play">> => gtp_command_play,
     <<"genmove">> => gtp_command_genmove,
     <<"time_left">> => gtp_command_time_left,
