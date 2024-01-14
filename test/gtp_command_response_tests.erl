@@ -6,8 +6,10 @@ roundtrip_test() ->
     {ok, ConnectionA} = gtp_erlang_transport:start_link(),
     {ok, ConnectionB} = gtp_erlang_transport:start_link(ConnectionA),
 
+    {ok, Engine} = gtp_bogus_engine:start_link(),
+
     {ok, _EngineChannel} = gtp_engine_channel:start_link(
-        gtp_bogus_engine, make_ref(), gtp_erlang_transport, ConnectionB, []
+        gtp_bogus_engine, Engine, gtp_erlang_transport, ConnectionB, []
     ),
 
     {ok, ControllerChannel} = gtp_controller_channel:start_link(
@@ -21,8 +23,10 @@ shutdown_test() ->
     {ok, ConnectionA} = gtp_erlang_transport:start_link(),
     {ok, ConnectionB} = gtp_erlang_transport:start_link(ConnectionA),
 
+    {ok, Engine} = gtp_bogus_engine:start_link(),
+
     {ok, EngineChannel} = gtp_engine_channel:start_link(
-        gtp_bogus_engine, make_ref(), gtp_erlang_transport, ConnectionB, []
+        gtp_bogus_engine, Engine, gtp_erlang_transport, ConnectionB, []
     ),
 
     {ok, ControllerChannel} = gtp_controller_channel:start_link(
@@ -34,14 +38,17 @@ shutdown_test() ->
     false = is_process_alive(ConnectionA),
     false = is_process_alive(ConnectionB),
     false = is_process_alive(EngineChannel),
+    false = is_process_alive(Engine),
     false = is_process_alive(ControllerChannel).
 
 command_with_single_argument_test() ->
     {ok, ConnectionA} = gtp_erlang_transport:start_link(),
     {ok, ConnectionB} = gtp_erlang_transport:start_link(ConnectionA),
 
+    {ok, Engine} = gtp_bogus_engine:start_link(),
+
     {ok, _EngineChannel} = gtp_engine_channel:start_link(
-        gtp_bogus_engine, make_ref(), gtp_erlang_transport, ConnectionB, []
+        gtp_bogus_engine, Engine, gtp_erlang_transport, ConnectionB, []
     ),
 
     {ok, ControllerChannel} = gtp_controller_channel:start_link(
@@ -57,8 +64,10 @@ command_with_multiple_arguments_test() ->
     {ok, ConnectionA} = gtp_erlang_transport:start_link(),
     {ok, ConnectionB} = gtp_erlang_transport:start_link(ConnectionA),
 
+    {ok, Engine} = gtp_bogus_engine:start_link(),
+
     {ok, _EngineChannel} = gtp_engine_channel:start_link(
-        gtp_bogus_engine, make_ref(), gtp_erlang_transport, ConnectionB, []
+        gtp_bogus_engine, Engine, gtp_erlang_transport, ConnectionB, []
     ),
 
     {ok, ControllerChannel} = gtp_controller_channel:start_link(
@@ -76,8 +85,10 @@ command_with_multiple_strings_response_test() ->
     {ok, ConnectionA} = gtp_erlang_transport:start_link(),
     {ok, ConnectionB} = gtp_erlang_transport:start_link(ConnectionA),
 
+    {ok, Engine} = gtp_bogus_engine:start_link(),
+
     {ok, _EngineChannel} = gtp_engine_channel:start_link(
-        gtp_bogus_engine, make_ref(), gtp_erlang_transport, ConnectionB, []
+        gtp_bogus_engine, Engine, gtp_erlang_transport, ConnectionB, []
     ),
 
     {ok, ControllerChannel} = gtp_controller_channel:start_link(
@@ -94,8 +105,10 @@ command_with_multiline_response_test() ->
     {ok, ConnectionA} = gtp_erlang_transport:start_link(),
     {ok, ConnectionB} = gtp_erlang_transport:start_link(ConnectionA),
 
+    {ok, Engine} = gtp_bogus_engine:start_link(),
+
     {ok, _EngineChannel} = gtp_engine_channel:start_link(
-        gtp_bogus_engine, make_ref(), gtp_erlang_transport, ConnectionB, []
+        gtp_bogus_engine, Engine, gtp_erlang_transport, ConnectionB, []
     ),
 
     {ok, ControllerChannel} = gtp_controller_channel:start_link(

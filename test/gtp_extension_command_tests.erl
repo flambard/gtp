@@ -6,8 +6,10 @@ roundtrip_test() ->
     {ok, ConnectionA} = gtp_erlang_transport:start_link(),
     {ok, ConnectionB} = gtp_erlang_transport:start_link(ConnectionA),
 
+    {ok, Engine} = gtp_bogus_engine:start_link(),
+
     {ok, EngineChannel} = gtp_engine_channel:start_link(
-        gtp_bogus_engine, make_ref(), gtp_erlang_transport, ConnectionB, []
+        gtp_bogus_engine, Engine, gtp_erlang_transport, ConnectionB, []
     ),
 
     ok = gtp_engine_channel:register_extension_commands(EngineChannel, #{
