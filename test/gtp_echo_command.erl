@@ -1,20 +1,14 @@
 -module(gtp_echo_command).
+
 -behaviour(gtp_controller_command).
 -behaviour(gtp_engine_command).
--include_lib("gtp.hrl").
 
--export([
-    new/1
-]).
 
+
+-export([new/1]).
 %% gtp_command callbacks
--export([
-    command_name/0,
-    decode_command_arguments/1,
-    decode_response_values/1,
-    encode_command_arguments/1,
-    encode_response_values/1
-]).
+-export([command_name/0, decode_command_arguments/1, decode_response_values/1,
+         encode_command_arguments/1, encode_response_values/1]).
 
 -record(echo, {value}).
 
