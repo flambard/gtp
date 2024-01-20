@@ -1,53 +1,41 @@
 -module(gtp_engine_channel).
+
 -behaviour(gen_server).
+
 -include("gtp.hrl").
 
 %% API
--export([
-    start_link/5,
-    register_extension_commands/2
-]).
-
+-export([start_link/5, register_extension_commands/2]).
 %% gen_server callbacks
--export([
-    init/1,
-    handle_call/3,
-    handle_cast/2,
-    handle_info/2,
-    terminate/2
-]).
+-export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2]).
 
 %%%
 %%% API
 %%%
 
--spec start_link(
-    EngineMod :: atom(),
-    Engine :: term(),
-    ChannelMod :: atom(),
-    Channel :: pid(),
-    Options :: proplists:proplist()
-) ->
-    {ok, EngineServer :: pid()} | {error, Reason :: term()}.
-
-start_link(EngineMod, Engine, ChannelMod, Channel, Options) ->
-    Args = [EngineMod, Engine, ChannelMod, Channel],
+-spec start_link(EngineMod :: atom(),
+                 Engine :: term(),
+                 TransportMod :: atom(),
+                 Transport :: pid(),
+                 Options :: proplists:proplist()) ->
+                    {ok, EngineServer :: pid()} | {error, Reason :: term()}.
+start_link(EngineMod, Engine, TransportMod, Transport, Options) ->
+    Args = [EngineMod, Engine, TransportMod, Transport],
     case gen_server:start_link(?MODULE, Args, Options) of
         {ok, Pid} ->
-            case ChannelMod:controlling_process(Channel, Pid) of
-                {error, Reason} -> {error, {channel, Reason}};
-                ok -> {ok, Pid}
+            case TransportMod:controlling_process(Transport, Pid) of
+                {error, Reason} ->
+                    {error, {transport, Reason}};
+                ok ->
+                    {ok, Pid}
             end;
         Other ->
             Other
     end.
 
--spec register_extension_commands(
-    EngineServer :: pid(),
-    ExtensionCommands :: #{Name :: binary() => Module :: atom()}
-) ->
-    ok.
-
+-spec register_extension_commands(EngineServer :: pid(),
+                                  ExtensionCommands :: #{Name :: binary() => Module :: atom()}) ->
+                                     ok.
 register_extension_commands(Server, ExtensionCommands) ->
     gen_server:call(Server, {register_extension_commands, ExtensionCommands}).
 
@@ -55,14 +43,13 @@ register_extension_commands(Server, ExtensionCommands) ->
 %%% gen_server callbacks
 %%%
 
-init([EngineMod, Engine, ChannelMod, Channel]) ->
-    State = #{
-        channel_module => ChannelMod,
-        channel => Channel,
-        engine_module => EngineMod,
-        engine => Engine,
-        extension_commands => #{}
-    },
+init([EngineMod, Engine, TransportMod, Transport]) ->
+    State =
+        #{transport_module => TransportMod,
+          transport => Transport,
+          engine_module => EngineMod,
+          engine => Engine,
+          extension_commands => #{}},
     {ok, State}.
 
 handle_call({register_extension_commands, NewCommands}, _From, State) ->
@@ -74,13 +61,12 @@ handle_cast(_Ignored, State) ->
     {noreply, State}.
 
 handle_info({gtp, CommandMessage}, State) ->
-    #{
-        channel := Channel,
-        channel_module := ChannelMod,
-        engine_module := EngineMod,
-        engine := Engine,
-        extension_commands := ExtensionCommands
-    } = State,
+    #{transport := Transport,
+      transport_module := TransportMod,
+      engine_module := EngineMod,
+      engine := Engine,
+      extension_commands := ExtensionCommands} =
+        State,
 
     case preprocess(CommandMessage) of
         discard ->
@@ -91,25 +77,26 @@ handle_info({gtp, CommandMessage}, State) ->
 
             Response =
                 case EngineMod:handle_command(Engine, Command) of
-                    {error, Error} -> #failure{error_message = Error};
-                    {ok, ResponseValues} -> #success{values = ResponseValues}
+                    {error, Error} ->
+                        #failure{error_message = Error};
+                    {ok, ResponseValues} ->
+                        #success{values = ResponseValues}
                 end,
 
             ResponseMessage = gtp_response:encode(ID, Response, CommandMod),
-            ok = ChannelMod:send_message(Channel, ResponseMessage),
+            ok = TransportMod:send_message(Transport, ResponseMessage),
 
             case Command of
-                #quit{} -> {stop, normal, State};
-                _Other -> {noreply, State}
+                #quit{} ->
+                    {stop, normal, State};
+                _Other ->
+                    {noreply, State}
             end
     end.
 
 terminate(_Reason, State) ->
-    #{
-        channel := Channel,
-        channel_module := ChannelMod
-    } = State,
-    ChannelMod:stop(Channel).
+    #{transport := Transport, transport_module := TransportMod} = State,
+    TransportMod:stop(Transport).
 
 %%%
 %%% Private functions
@@ -127,6 +114,8 @@ remove_comment(Binary) ->
 
 discard_empty_line(Binary) ->
     case binary:replace(Binary, <<" ">>, <<>>, [global]) of
-        <<>> -> discard;
-        _NotEmpty -> {ok, Binary}
+        <<>> ->
+            discard;
+        _NotEmpty ->
+            {ok, Binary}
     end.
