@@ -1,28 +1,14 @@
 -module(gtp_port_transport).
--behaviour(gtp_channel_transport).
+
+-behaviour(gtp_old_channel_transport).
 -behaviour(gen_server).
 
 %% API
--export([
-    start_link/0,
-    open_port/2,
-    open_port/3
-]).
-
+-export([start_link/0, open_port/2, open_port/3]).
 %% gtp_channel_transport callbacks
--export([
-    controlling_process/2,
-    send_message/2,
-    stop/1
-]).
-
+-export([controlling_process/2, send_message/2, stop/1]).
 %% gen_server callbacks
--export([
-    init/1,
-    handle_call/3,
-    handle_cast/2,
-    handle_info/2
-]).
+-export([init/1, handle_call/3, handle_cast/2, handle_info/2]).
 
 %%%
 %%% API
@@ -55,10 +41,7 @@ stop(Server) ->
 %%%
 
 init([]) ->
-    State = #{
-        port => undefined,
-        controlling_process => undefined
-    },
+    State = #{port => undefined, controlling_process => undefined},
     {ok, State}.
 
 handle_call({open_port, PortName, PortSettings}, _From, State) ->
@@ -75,9 +58,6 @@ handle_cast(_Ignored, State) ->
     {noreply, State}.
 
 handle_info({Port, {data, {eol, Line}}}, State) ->
-    #{
-        port := Port,
-        controlling_process := Pid
-    } = State,
+    #{port := Port, controlling_process := Pid} = State,
     ok = gtp_channel_transport:recv_message(Pid, Line),
     {noreply, State}.

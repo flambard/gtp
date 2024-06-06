@@ -16,22 +16,12 @@
 -spec start_link(EngineMod :: atom(),
                  Engine :: term(),
                  TransportMod :: atom(),
-                 Transport :: pid(),
+                 TransportInitArgs :: [term()],
                  Options :: proplists:proplist()) ->
                     {ok, EngineServer :: pid()} | {error, Reason :: term()}.
-start_link(EngineMod, Engine, TransportMod, Transport, Options) ->
-    Args = [EngineMod, Engine, TransportMod, Transport],
-    case gen_server:start_link(?MODULE, Args, Options) of
-        {ok, Pid} ->
-            case TransportMod:controlling_process(Transport, Pid) of
-                {error, Reason} ->
-                    {error, {transport, Reason}};
-                ok ->
-                    {ok, Pid}
-            end;
-        Other ->
-            Other
-    end.
+start_link(EngineMod, Engine, TransportMod, TransportInitArgs, Options) ->
+    Args = [EngineMod, Engine, TransportMod, TransportInitArgs],
+    gen_server:start_link(?MODULE, Args, Options).
 
 -spec register_extension_commands(EngineServer :: pid(),
                                   ExtensionCommands :: #{Name :: binary() => Module :: atom()}) ->
@@ -43,10 +33,11 @@ register_extension_commands(Server, ExtensionCommands) ->
 %%% gen_server callbacks
 %%%
 
-init([EngineMod, Engine, TransportMod, Transport]) ->
+init([EngineMod, Engine, TransportMod, TransportInitArgs]) ->
+    {ok, TransportState} = TransportMod:init(TransportInitArgs),
     State =
         #{transport_module => TransportMod,
-          transport => Transport,
+          transport_state => TransportState,
           engine_module => EngineMod,
           engine => Engine,
           extension_commands => #{}},
@@ -57,12 +48,9 @@ handle_call({register_extension_commands, NewCommands}, _From, State) ->
     NewState = State#{extension_commands := maps:merge(ExtensionCommands, NewCommands)},
     {reply, ok, NewState}.
 
-handle_cast(_Ignored, State) ->
-    {noreply, State}.
-
-handle_info({gtp, CommandMessage}, State) ->
-    #{transport := Transport,
-      transport_module := TransportMod,
+handle_cast({transport_recv, CommandMessage}, State) ->
+    #{transport_module := TransportMod,
+      transport_state := TransportState,
       engine_module := EngineMod,
       engine := Engine,
       extension_commands := ExtensionCommands} =
@@ -84,19 +72,25 @@ handle_info({gtp, CommandMessage}, State) ->
                 end,
 
             ResponseMessage = gtp_response:encode(ID, Response, CommandMod),
-            ok = TransportMod:send_message(Transport, ResponseMessage),
+            {ok, NewTransportState} = TransportMod:send_message(ResponseMessage, TransportState),
+            NewState = State#{transport_state := NewTransportState},
 
             case Command of
                 #quit{} ->
-                    {stop, normal, State};
+                    {stop, normal, NewState};
                 _Other ->
-                    {noreply, State}
+                    {noreply, NewState}
             end
     end.
 
-terminate(_Reason, State) ->
-    #{transport := Transport, transport_module := TransportMod} = State,
-    TransportMod:stop(Transport).
+handle_info(Message, State) ->
+    #{transport_module := TransportMod, transport_state := TransportState} = State,
+    {noreply, NewTransportState} = TransportMod:handle_info(Message, TransportState),
+    {noreply, State#{transport_state := NewTransportState}}.
+
+terminate(Reason, State) ->
+    #{transport_module := TransportMod, transport_state := TransportState} = State,
+    TransportMod:terminate(Reason, TransportState).
 
 %%%
 %%% Private functions
