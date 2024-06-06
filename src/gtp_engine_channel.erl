@@ -61,6 +61,17 @@ handle_cast(_Ignored, State) ->
     {noreply, State}.
 
 handle_info({gtp, CommandMessage}, State) ->
+    handle_command_message(CommandMessage, State).
+
+terminate(_Reason, State) ->
+    #{transport := Transport, transport_module := TransportMod} = State,
+    TransportMod:stop(Transport).
+
+%%%
+%%% Private functions
+%%%
+
+handle_command_message(CommandMessage, State) ->
     #{transport := Transport,
       transport_module := TransportMod,
       engine_module := EngineMod,
@@ -94,19 +105,16 @@ handle_info({gtp, CommandMessage}, State) ->
             end
     end.
 
-terminate(_Reason, State) ->
-    #{transport := Transport, transport_module := TransportMod} = State,
-    TransportMod:stop(Transport).
-
-%%%
-%%% Private functions
-%%%
-
 preprocess(Binary) ->
     B1 = gtp_protocol:remove_control_characters(Binary),
     B2 = remove_comment(B1),
     B3 = gtp_protocol:convert_tabs_to_spaces(B2),
-    discard_empty_line(B3).
+    case discard_empty_line(B3) of
+        discard ->
+            discard;
+        {ok, B4} ->
+            {ok, hd(binary:split(B4, <<"\n">>, [trim]))}
+    end.
 
 remove_comment(Binary) ->
     [WithoutComment | _Ignored] = binary:split(Binary, <<"#">>),

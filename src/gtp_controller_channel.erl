@@ -111,4 +111,5 @@ terminate(_Reason, State) ->
 
 preprocess(Binary) ->
     B1 = gtp_protocol:remove_control_characters(Binary),
-    gtp_protocol:convert_tabs_to_spaces(B1).
+    B2 = gtp_protocol:convert_tabs_to_spaces(B1),
+    hd(binary:split(B2, <<"\n">>, [trim])).
