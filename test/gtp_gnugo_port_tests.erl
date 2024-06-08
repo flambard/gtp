@@ -8,26 +8,21 @@
 %%
 
 connect_and_quit_test() ->
-    {ok, Connection} = gtp_port_transport:start_link(),
+    {ok, Connection} = gtp_port_io_server:start_link(),
     ok = gtp_port_transport:open_port(Connection, {spawn, "gnugo --mode gtp"}),
-
-    {ok, ControllerChannel} =
-        gtp_controller_channel:start_link(gtp_port_transport, Connection, []),
+    {ok, ControllerChannel} = gtp_controller_channel:start_link(Connection, []),
 
     {ok, #success{values = #{version_number := 2}}} =
         gtp_controller_channel:send_command(ControllerChannel, #protocol_version{}),
 
     {ok, #success{}} = gtp_controller_channel:send_command(ControllerChannel, #quit{}),
 
-    false = is_process_alive(Connection),
     false = is_process_alive(ControllerChannel).
 
 showboard_started_game_test() ->
-    {ok, Connection} = gtp_port_transport:start_link(),
+    {ok, Connection} = gtp_port_io_server:start_link(),
     ok = gtp_port_transport:open_port(Connection, {spawn, "gnugo --mode gtp"}),
-
-    {ok, ControllerChannel} =
-        gtp_controller_channel:start_link(gtp_port_transport, Connection, []),
+    {ok, ControllerChannel} = gtp_controller_channel:start_link(Connection, []),
 
     {ok, #success{}} =
         gtp_controller_channel:send_command(ControllerChannel, #komi{new_komi = 6.5}),
