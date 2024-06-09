@@ -9,7 +9,7 @@
 
 connect_and_quit_test() ->
     {ok, Connection} = gtp_port_io_server:start_link(),
-    ok = gtp_port_transport:open_port(Connection, {spawn, "gnugo --mode gtp"}),
+    ok = gtp_port_io_server:open_port(Connection, {spawn, "gnugo --mode gtp"}),
     {ok, ControllerChannel} = gtp_controller_channel:start_link(Connection, []),
 
     {ok, #success{values = #{version_number := 2}}} =
@@ -21,7 +21,7 @@ connect_and_quit_test() ->
 
 showboard_started_game_test() ->
     {ok, Connection} = gtp_port_io_server:start_link(),
-    ok = gtp_port_transport:open_port(Connection, {spawn, "gnugo --mode gtp"}),
+    ok = gtp_port_io_server:open_port(Connection, {spawn, "gnugo --mode gtp"}),
     {ok, ControllerChannel} = gtp_controller_channel:start_link(Connection, []),
 
     {ok, #success{}} =
