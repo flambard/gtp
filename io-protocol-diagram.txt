@@ -1,0 +1,72 @@
+title Go Text Protocol - Erlang implementation
+
+participant Controller
+participant GTP Controller Channel
+participant Controller I/O Server
+participant Engine I/O Server
+participant GTP Engine Channel
+participant Engine
+
+entryspacing 0.9
+
+Engine I/O Server(1)<-GTP Engine Channel:io_request\n{get_line, latin1, "command"}
+
+activate Engine I/O Server
+
+Controller->GTP Controller Channel:gtp_controller_channel:\nsend_command/2
+
+activate GTP Controller Channel
+activate Controller
+
+GTP Controller Channel->(1)Controller I/O Server:io_request\n{put_chars, latin1, Data}
+
+activate Controller I/O Server
+
+Controller I/O Server--:3>(1)Engine I/O Server:TRANSPORT
+
+GTP Controller Channel(1)<-Controller I/O Server:io_reply\nok / {error, Reason}
+
+deactivate Controller I/O Server
+
+Engine I/O Server->(1)GTP Engine Channel:io_reply\nData / eof / {error, Reason}
+
+deactivate Engine I/O Server
+activate GTP Engine Channel
+
+GTP Engine Channel->Engine:EngineModule:\nhandle_command/2
+
+activate Engine
+
+GTP Engine Channel<--Engine:{ok, Response} / {error, Reason}
+
+deactivate Engine
+
+loop recv response lines
+
+GTP Controller Channel->(1)Controller I/O Server:io_request\n{get_line, latin1, "response"}
+
+deactivate GTP Controller Channel
+activate Controller I/O Server
+
+Engine I/O Server(1)<-GTP Engine Channel:io_request\n{put_chars, latin1, Data}
+
+activate Engine I/O Server
+
+Controller I/O Server(1)<:3--Engine I/O Server:TRANSPORT
+
+Engine I/O Server->(1)GTP Engine Channel:io_reply\nok / {error, Reason}
+
+deactivate GTP Engine Channel
+deactivate Engine I/O Server
+
+GTP Controller Channel(1)<-Controller I/O Server:io_reply\nData / eof / {error, Reason}
+
+deactivate Controller I/O Server
+activate GTP Controller Channel
+
+end
+
+Controller<--GTP Controller Channel:{ok, Response} / {error, Reason}
+
+deactivate GTP Controller Channel
+deactivate Controller
