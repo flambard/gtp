@@ -9,6 +9,7 @@
 
 %% API
 -export([start_link/2, send_command/2, send_command/3]).
+
 %% gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2]).
 
@@ -17,17 +18,17 @@
 %%%
 
 -spec start_link(Transport :: pid(), Options :: proplists:proplist()) ->
-                    {ok, pid()} | {error, Reason :: term()}.
+    {ok, pid()} | {error, Reason :: term()}.
 start_link(Transport, Options) ->
     gen_server:start_link(?MODULE, [Transport], Options).
 
 -spec send_command(Controller :: pid(), Command :: command()) ->
-                      {ok, Response :: response()} | {error, Reason :: term()}.
+    {ok, Response :: response()} | {error, Reason :: term()}.
 send_command(Controller, Command) ->
     send_command(Controller, Command, []).
 
 -spec send_command(Controller :: pid(), Command :: command(), options()) ->
-                      {ok, Response :: response()} | {error, Reason :: term()}.
+    {ok, Response :: response()} | {error, Reason :: term()}.
 send_command(Controller, #quit{}, Options) ->
     case gen_server:call(Controller, {send_command, #quit{}, Options}) of
         {error, Reason} ->
@@ -45,11 +46,13 @@ send_command(Controller, Command, Options) ->
 
 init([Transport]) ->
     State =
-        #{response_buffer => [],
-          reply_to => undefined,
-          message_id => undefined,
-          command_module => undefined,
-          transport => Transport},
+        #{
+            response_buffer => [],
+            reply_to => undefined,
+            message_id => undefined,
+            command_module => undefined,
+            transport => Transport
+        },
     {ok, State}.
 
 handle_call({send_command, Command, Options}, From, State) ->
@@ -65,9 +68,11 @@ handle_call({send_command, Command, Options}, From, State) ->
         ok ->
             _Ref = request_line(Transport),
             NewState =
-                State#{reply_to := From,
-                       message_id := ID,
-                       command_module := CommandMod},
+                State#{
+                    reply_to := From,
+                    message_id := ID,
+                    command_module := CommandMod
+                },
             {noreply, NewState}
     end.
 
@@ -98,18 +103,22 @@ handle_info({io_reply, _Ref, Line}, State) ->
 %%%
 
 finish_response(State) ->
-    #{response_buffer := Buffer,
-      reply_to := From,
-      message_id := ID,
-      command_module := CommandMod} =
+    #{
+        response_buffer := Buffer,
+        reply_to := From,
+        message_id := ID,
+        command_module := CommandMod
+    } =
         State,
     Message = lists:reverse(Buffer),
     {ID, Response} = gtp_response:decode(CommandMod, Message),
     ok = gen_server:reply(From, {ok, Response}),
-    State#{response_buffer := [],
-           reply_to := undefined,
-           message_id := undefined,
-           command_module := undefined}.
+    State#{
+        response_buffer := [],
+        reply_to := undefined,
+        message_id := undefined,
+        command_module := undefined
+    }.
 
 request_line(Transport) ->
     gtp_io:request_line(Transport, "GTP response> ").

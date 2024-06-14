@@ -6,6 +6,7 @@
 
 %% API
 -export([start_link/4, register_extension_commands/2]).
+
 %% gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2]).
 
@@ -13,18 +14,22 @@
 %%% API
 %%%
 
--spec start_link(EngineMod :: atom(),
-                 Engine :: term(),
-                 Transport :: pid(),
-                 Options :: proplists:proplist()) ->
-                    {ok, EngineServer :: pid()} | {error, Reason :: term()}.
+-spec start_link(
+    EngineMod :: atom(),
+    Engine :: term(),
+    Transport :: pid(),
+    Options :: proplists:proplist()
+) ->
+    {ok, EngineServer :: pid()} | {error, Reason :: term()}.
 start_link(EngineMod, Engine, Transport, Options) ->
     Args = [EngineMod, Engine, Transport],
     gen_server:start_link(?MODULE, Args, Options).
 
--spec register_extension_commands(EngineServer :: pid(),
-                                  ExtensionCommands :: #{Name :: binary() => Module :: atom()}) ->
-                                     ok.
+-spec register_extension_commands(
+    EngineServer :: pid(),
+    ExtensionCommands :: #{Name :: binary() => Module :: atom()}
+) ->
+    ok.
 register_extension_commands(Server, ExtensionCommands) ->
     gen_server:call(Server, {register_extension_commands, ExtensionCommands}).
 
@@ -35,10 +40,12 @@ register_extension_commands(Server, ExtensionCommands) ->
 init([EngineMod, Engine, Transport]) ->
     _Ref = request_line(Transport),
     State =
-        #{transport => Transport,
-          engine_module => EngineMod,
-          engine => Engine,
-          extension_commands => #{}},
+        #{
+            transport => Transport,
+            engine_module => EngineMod,
+            engine => Engine,
+            extension_commands => #{}
+        },
     {ok, State}.
 
 handle_call({register_extension_commands, NewCommands}, _From, State) ->
@@ -60,10 +67,12 @@ request_line(Transport) ->
     gtp_io:request_line(Transport, "GTP command> ").
 
 handle_command_message(CommandMessage, State) ->
-    #{transport := Transport,
-      engine_module := EngineMod,
-      engine := Engine,
-      extension_commands := ExtensionCommands} =
+    #{
+        transport := Transport,
+        engine_module := EngineMod,
+        engine := Engine,
+        extension_commands := ExtensionCommands
+    } =
         State,
 
     case preprocess(CommandMessage) of

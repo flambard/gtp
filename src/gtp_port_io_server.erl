@@ -4,6 +4,7 @@
 
 %% API
 -export([start_link/0, open_port/2, open_port/3]).
+
 %% gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2]).
 
@@ -26,10 +27,12 @@ open_port(Server, PortName, PortSettings) ->
 
 init([]) ->
     State =
-        #{port => undefined,
-          reply_to => undefined,
-          reply_as => undefined,
-          buffer => queue:new()},
+        #{
+            port => undefined,
+            reply_to => undefined,
+            reply_as => undefined,
+            buffer => queue:new()
+        },
     {ok, State}.
 
 handle_call({open_port, PortName, PortSettings}, _From, State) ->
@@ -58,10 +61,12 @@ handle_info({io_request, From, ReplyAs, {get_line, latin1, _Prompt}}, State) ->
         end,
     {noreply, NewState};
 handle_info({Port, {data, {eol, Line}}}, State) ->
-    #{port := Port,
-      buffer := Buffer,
-      reply_to := ReplyTo,
-      reply_as := ReplyAs} =
+    #{
+        port := Port,
+        buffer := Buffer,
+        reply_to := ReplyTo,
+        reply_as := ReplyAs
+    } =
         State,
     NewState =
         case ReplyTo of

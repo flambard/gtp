@@ -31,12 +31,16 @@ showboard_started_game_test() ->
     {ok, #success{}} = gtp_controller_channel:send_command(ControllerChannel, #clear_board{}),
 
     {ok, #success{values = #{vertices := [_V1, _V2, _V3]}}} =
-        gtp_controller_channel:send_command(ControllerChannel,
-                                            #fixed_handicap{number_of_stones = 3}),
+        gtp_controller_channel:send_command(
+            ControllerChannel,
+            #fixed_handicap{number_of_stones = 3}
+        ),
 
     {ok, #success{}} =
-        gtp_controller_channel:send_command(ControllerChannel,
-                                            #play{move = #move{color = white, vertex = {g, 3}}}),
+        gtp_controller_channel:send_command(
+            ControllerChannel,
+            #play{move = #move{color = white, vertex = {g, 3}}}
+        ),
 
     {ok, #success{values = #{vertex := {_, _}}}} =
         gtp_controller_channel:send_command(ControllerChannel, #genmove{color = black}),

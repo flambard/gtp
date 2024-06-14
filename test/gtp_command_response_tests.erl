@@ -44,8 +44,10 @@ command_with_single_argument_test() ->
     {ok, ControllerChannel} = gtp_controller_channel:start_link(CrossoverIO, []),
 
     {ok, #success{values = #{known := true}}} =
-        gtp_controller_channel:send_command(ControllerChannel,
-                                            #known_command{command_name = <<"known_command">>}).
+        gtp_controller_channel:send_command(
+            ControllerChannel,
+            #known_command{command_name = <<"known_command">>}
+        ).
 
 command_with_multiple_arguments_test() ->
     {ok, CrossoverIO} = gtp_crossover_io_server:start_link([]),
@@ -58,10 +60,14 @@ command_with_multiple_arguments_test() ->
     {ok, ControllerChannel} = gtp_controller_channel:start_link(CrossoverIO, []),
 
     {ok, #failure{error_message = <<"unknown command">>}} =
-        gtp_controller_channel:send_command(ControllerChannel,
-                                            #time_left{color = black,
-                                                       time = 30,
-                                                       stones = 0}).
+        gtp_controller_channel:send_command(
+            ControllerChannel,
+            #time_left{
+                color = black,
+                time = 30,
+                stones = 0
+            }
+        ).
 
 command_with_multiple_strings_response_test() ->
     {ok, CrossoverIO} = gtp_crossover_io_server:start_link([]),
@@ -92,9 +98,11 @@ command_with_multiline_response_test() ->
     {ok, #success{values = #{commands := Commands}}} =
         gtp_controller_channel:send_command(ControllerChannel, #list_commands{}, [{id, 19}]),
 
-    [<<"protocol_version">>,
-     <<"name">>,
-     <<"known_command">>,
-     <<"list_commands">>,
-     <<"quit">>] =
+    [
+        <<"protocol_version">>,
+        <<"name">>,
+        <<"known_command">>,
+        <<"list_commands">>,
+        <<"quit">>
+    ] =
         Commands.

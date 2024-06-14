@@ -17,6 +17,7 @@
 
 %% API
 -export([start_link/1]).
+
 %% gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2]).
 
@@ -94,11 +95,15 @@ handle_io_request({put_chars, latin1, Chars}, Side, From, ReplyAs, State) ->
     %% 3. Reply 'ok' immediately to the sender
     %%
     OtherSide = other(Side),
-    #{OtherSide :=
-          #client{pid = Pid,
-                  reply_as = Ref,
-                  buffer = Buffer} =
-              C} =
+    #{
+        OtherSide :=
+            #client{
+                pid = Pid,
+                reply_as = Ref,
+                buffer = Buffer
+            } =
+            C
+    } =
         State,
     Buffer1 = <<Buffer/binary, Chars/binary>>,
     NewClient =

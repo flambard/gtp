@@ -1,14 +1,14 @@
-{application, gtp,
- [{description, "An Erlang implementation of the Go Text Protocol"},
-  {vsn, "0.1.0"},
-  {registered, []},
-  {applications,
-   [kernel,
-    stdlib
-   ]},
-  {env,[]},
-  {modules, []},
+{application, gtp, [
+    {description, "An Erlang implementation of the Go Text Protocol"},
+    {vsn, "0.1.0"},
+    {registered, []},
+    {applications, [
+        kernel,
+        stdlib
+    ]},
+    {env, []},
+    {modules, []},
 
-  {licenses, ["Apache-2.0"]},
-  {links, [{"GitHub", "https://github.com/flambard/gtp"}]}
- ]}.
+    {licenses, ["Apache-2.0"]},
+    {links, [{"GitHub", "https://github.com/flambard/gtp"}]}
+]}.
