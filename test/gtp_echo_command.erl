@@ -26,12 +26,10 @@ encode_command_arguments(#echo{value = Value}) ->
     [gtp_entity:encode(string, Value)].
 
 decode_command_arguments(Binary) ->
-    {Value, []} = gtp_entity:decode(string, Binary),
-    #echo{value = Value}.
+    #echo{value = gtp_entity:decode_line(string, Binary)}.
 
 encode_response_values(#{value := Value}) ->
     [gtp_entity:encode(string, Value)].
 
 decode_response_values([BinValue]) ->
-    {Value, []} = gtp_entity:decode(string, BinValue),
-    #{value => Value}.
+    #{value => gtp_entity:decode_line(string, BinValue)}.
