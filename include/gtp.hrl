@@ -34,7 +34,7 @@
     | color()
     | vertex()
     | #move{}
-    | iodata()
+    | binary()
     | [entity_value()].
 
 %%%

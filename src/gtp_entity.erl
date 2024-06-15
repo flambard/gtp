@@ -32,7 +32,7 @@ encode(vertex, pass) ->
     <<"pass">>;
 encode(move, #move{color = C, vertex = V}) ->
     encode([color, vertex], [C, V]);
-encode(string, String) ->
+encode(string, <<String/binary>>) ->
     String;
 encode(Types, Values) when is_list(Types) ->
     [lists:join(<<" ">>, lists:zipwith(fun encode/2, Types, Values))];

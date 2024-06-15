@@ -25,7 +25,7 @@ decode_pass_test() ->
     {pass, []} = gtp_entity:decode(vertex, <<"pass">>).
 
 encode_string_test() ->
-    EncodedString = gtp_entity:encode(string, "Deadmau5"),
+    EncodedString = gtp_entity:encode(string, <<"Deadmau5">>),
     <<"Deadmau5">> = iolist_to_binary(EncodedString).
 
 decode_string_test() ->
@@ -50,7 +50,7 @@ encode_alternative_1_test() ->
     <<"k3">> = iolist_to_binary(EncodedValue).
 
 encode_alternative_2_test() ->
-    EncodedValue = gtp_entity:encode({alternative, vertex, string}, "resign"),
+    EncodedValue = gtp_entity:encode({alternative, vertex, string}, <<"resign">>),
     <<"resign">> = iolist_to_binary(EncodedValue).
 
 decode_alternative_1_test() ->
@@ -60,15 +60,15 @@ decode_alternative_2_test() ->
     {<<"resign">>, []} = gtp_entity:decode({alternative, vertex, string}, <<"resign">>).
 
 encode_multiline_string_test() ->
-    EncodedString = gtp_entity:encode({multiline, string}, ["Ein", "Zwei", "Drei"]),
+    EncodedString = gtp_entity:encode({multiline, string}, [<<"Ein">>, <<"Zwei">>, <<"Drei">>]),
     <<"Ein\nZwei\nDrei">> = iolist_to_binary(EncodedString).
 
 encode_multiline_list_of_strings_test() ->
     EncodedString = gtp_entity:encode({multiline, {list, string}}, [
-        ["One", "Ring", "to", "rule", "them", "all"],
-        ["One", "Ring", "to", "find", "them"],
-        ["One", "Ring", "to", "bring", "them", "all"],
-        ["and", "in", "the", "darkness", "bind", "them"]
+        [<<"One">>, <<"Ring">>, <<"to">>, <<"rule">>, <<"them">>, <<"all">>],
+        [<<"One">>, <<"Ring">>, <<"to">>, <<"find">>, <<"them">>],
+        [<<"One">>, <<"Ring">>, <<"to">>, <<"bring">>, <<"them">>, <<"all">>],
+        [<<"and">>, <<"in">>, <<"the">>, <<"darkness">>, <<"bind">>, <<"them">>]
     ]),
     <<"One Ring to rule them all\nOne Ring to find them\nOne Ring to bring them all\nand in the darkness bind them">> =
         iolist_to_binary(EncodedString).
