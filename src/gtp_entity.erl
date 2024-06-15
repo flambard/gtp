@@ -14,9 +14,9 @@
 
 -spec encode(entity_type(), entity_value()) -> iodata().
 
-encode(int, Int) ->
+encode(int, Int) when is_integer(Int) ->
     integer_to_binary(Int);
-encode(float, Float) ->
+encode(float, Float) when is_number(Float) ->
     float_to_binary(Float);
 encode(boolean, true) ->
     <<"true">>;
@@ -34,7 +34,7 @@ encode(move, #move{color = C, vertex = V}) ->
     encode([color, vertex], [C, V]);
 encode(string, <<String/binary>>) ->
     String;
-encode(Types, Values) when is_list(Types) ->
+encode(Types, Values) when is_list(Types) and is_list(Values) ->
     [lists:join(<<" ">>, lists:zipwith(fun encode/2, Types, Values))];
 encode({alternative, Type1, Type2}, Value) ->
     try encode(Type1, Value) of
@@ -42,16 +42,14 @@ encode({alternative, Type1, Type2}, Value) ->
     catch
         error:_Error -> encode(Type2, Value)
     end;
-encode({list, Type}, List) ->
-    lists:join(<<" ">>, [encode(Type, E) || E <- List]);
-encode({multiline, Type}, List) ->
-    lists:join(<<"\n">>, [encode(Type, E) || E <- List]).
+encode({list, Type}, Values) when is_list(Values) ->
+    lists:join(<<" ">>, [encode(Type, E) || E <- Values]);
+encode({multiline, Type}, Values) when is_list(Values) ->
+    lists:join(<<"\n">>, [encode(Type, E) || E <- Values]).
 
 %%%
 %%% Decoding
 %%%
-
--spec decode(singleline_entity_type(), binary()) -> {entity_value(), [binary()]}.
 
 decode(int, Binary) ->
     [IntBin | Rest] = binary:split(Binary, <<" ">>, [trim]),
@@ -99,7 +97,15 @@ decode({list, Type}, Binary) ->
     DecodedList = decode_list_of(Type, Binary),
     {DecodedList, []}.
 
--spec decode_line(singleline_entity_type(), binary()) -> entity_value().
+-spec decode_line
+    (int, binary()) -> integer();
+    (float, binary()) -> float();
+    (boolean, binary()) -> boolean();
+    (color, binary()) -> color();
+    (vertex, binary()) -> vertex();
+    (move, binary()) -> #move{};
+    (string, binary()) -> binary();
+    (compound_entity_type(), binary()) -> entity_value().
 
 decode_line(Type, Binary) ->
     {Value, []} = decode(Type, Binary),

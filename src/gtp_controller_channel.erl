@@ -17,8 +17,8 @@
 %%% API
 %%%
 
--spec start_link(Transport :: pid(), Options :: proplists:proplist()) ->
-    {ok, pid()} | {error, Reason :: term()}.
+-spec start_link(Transport :: pid(), Options :: [gen_server:start_opt()]) ->
+    {ok, pid()} | ignore | {error, Reason :: term()}.
 start_link(Transport, Options) ->
     gen_server:start_link(?MODULE, [Transport], Options).
 

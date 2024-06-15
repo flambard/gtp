@@ -18,9 +18,9 @@
     EngineMod :: atom(),
     Engine :: term(),
     Transport :: pid(),
-    Options :: proplists:proplist()
+    Options :: [gen_server:start_opt()]
 ) ->
-    {ok, EngineServer :: pid()} | {error, Reason :: term()}.
+    {ok, EngineServer :: pid()} | ignore | {error, Reason :: term()}.
 start_link(EngineMod, Engine, Transport, Options) ->
     Args = [EngineMod, Engine, Transport],
     gen_server:start_link(?MODULE, Args, Options).
