@@ -51,6 +51,6 @@ showboard_started_game_test() ->
     debug_display_board(Board).
 
 debug_display_board(WordLines) ->
-    Lines = lists:map(fun(Words) -> lists:join(" ", Words) end, WordLines),
+    Lines = [lists:join(" ", Words) || Words <- WordLines],
     Board = lists:join("\n", Lines),
     ?debugMsg(Board).

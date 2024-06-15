@@ -108,7 +108,7 @@ decode_line(Type, Binary) ->
 -spec decode_multiline(singleline_entity_type(), [binary()]) -> [entity_value()].
 
 decode_multiline(Type, Lines) ->
-    lists:map(fun(Binary) -> decode_line(Type, Binary) end, Lines).
+    [decode_line(Type, Binary) || Binary <- Lines].
 
 %%%
 %%% Private functions
