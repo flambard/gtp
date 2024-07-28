@@ -4,7 +4,7 @@
 -include_lib("gtp.hrl").
 
 roundtrip_test() ->
-    {ok, CrossoverIO} = gtp_crossover_io_server:start_link([]),
+    {ok, CrossoverIO} = crossover_io_server:start_link([]),
 
     {ok, Engine} = gtp_bogus_engine:start_link(),
 
@@ -17,7 +17,7 @@ roundtrip_test() ->
         gtp_controller_channel:send_command(ControllerChannel, #protocol_version{}, [{id, 1}]).
 
 shutdown_test() ->
-    {ok, CrossoverIO} = gtp_crossover_io_server:start_link([]),
+    {ok, CrossoverIO} = crossover_io_server:start_link([]),
 
     {ok, Engine} = gtp_bogus_engine:start_link(),
 
@@ -34,7 +34,7 @@ shutdown_test() ->
     false = is_process_alive(ControllerChannel).
 
 command_with_single_argument_test() ->
-    {ok, CrossoverIO} = gtp_crossover_io_server:start_link([]),
+    {ok, CrossoverIO} = crossover_io_server:start_link([]),
 
     {ok, Engine} = gtp_bogus_engine:start_link(),
 
@@ -50,7 +50,7 @@ command_with_single_argument_test() ->
         ).
 
 command_with_multiple_arguments_test() ->
-    {ok, CrossoverIO} = gtp_crossover_io_server:start_link([]),
+    {ok, CrossoverIO} = crossover_io_server:start_link([]),
 
     {ok, Engine} = gtp_bogus_engine:start_link(),
 
@@ -70,7 +70,7 @@ command_with_multiple_arguments_test() ->
         ).
 
 command_with_multiple_strings_response_test() ->
-    {ok, CrossoverIO} = gtp_crossover_io_server:start_link([]),
+    {ok, CrossoverIO} = crossover_io_server:start_link([]),
 
     {ok, Engine} = gtp_bogus_engine:start_link(),
 
@@ -86,7 +86,7 @@ command_with_multiple_strings_response_test() ->
         gtp_controller_channel:send_command(ControllerChannel, #version{}).
 
 command_with_multiline_response_test() ->
-    {ok, CrossoverIO} = gtp_crossover_io_server:start_link([]),
+    {ok, CrossoverIO} = crossover_io_server:start_link([]),
 
     {ok, Engine} = gtp_bogus_engine:start_link(),
 

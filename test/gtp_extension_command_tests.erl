@@ -4,7 +4,7 @@
 -include_lib("gtp.hrl").
 
 roundtrip_test() ->
-    {ok, CrossoverIO} = gtp_crossover_io_server:start_link([]),
+    {ok, CrossoverIO} = crossover_io_server:start_link([]),
 
     {ok, Engine} = gtp_bogus_engine:start_link(),
 
