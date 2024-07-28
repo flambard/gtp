@@ -1,0 +1,8 @@
+{"1.2.0",
+[{<<"crossover_io">>,{pkg,<<"crossover_io">>,<<"0.1.0">>},0}]}.
+[
+{pkg_hash,[
+ {<<"crossover_io">>, <<"0485B2C6DEE0C3FE2C20385E2428EA71B5DCB0C21DE862A8BCF3D3A32171819F">>}]},
+{pkg_hash_ext,[
+ {<<"crossover_io">>, <<"4C3F47EC585BF72307C14AA6BF3BC56CC3971185C336E8A5E2A8F4C0E009F57A">>}]}
+].
